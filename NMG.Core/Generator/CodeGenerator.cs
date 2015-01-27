@@ -281,6 +281,11 @@ namespace NMG.Core.Generator
                 foreach (var fk in Table.Columns.Where(c => c.IsForeignKey && !c.IsPrimaryKey))
                 {
                     var typeName = appPrefs.ClassNamePrefix + pascalCaseTextFormatter.FormatSingular(fk.ForeignKeyTableName);
+                    if (String.IsNullOrEmpty(typeName))
+                    {
+                        System.Diagnostics.Trace.WriteLine(String.Format("Skipping null ForeignKeyTableName for field {0}", fk.Name));
+                        continue;
+                    }
                     var propertyName = Formatter.FormatSingular(fk.ForeignKeyTableName);
                     var fieldName = FixPropertyWithSameClassName(propertyName, Table.Name);
                     if (lastOne != fieldName)
@@ -302,6 +307,7 @@ namespace NMG.Core.Generator
 
         private string FixPropertyWithSameClassName(string property, string className)
         {
+            if (property == null) return null;
             return property.ToLowerInvariant() == className.ToLowerInvariant() ? property + "Val" : property;
         }
 
