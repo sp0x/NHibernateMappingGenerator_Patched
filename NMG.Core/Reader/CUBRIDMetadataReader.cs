@@ -91,9 +91,8 @@ namespace NMG.Core.Reader
                 using (conn)
                 {
                     CUBRIDCommand seqCommand = conn.CreateCommand();
-                    string sqlCmd = String.Format(@"select [name] from db_serial where class_name='{0}' and att_name='{1}'",
-                                                tablename,
-                                                column);
+                    string sqlCmd =
+	                    $@"select [name] from db_serial where class_name='{tablename}' and att_name='{column}'";
                     seqCommand.CommandText = sqlCmd;
                     var seqReader = (CUBRIDDataReader)seqCommand.ExecuteReader(CommandBehavior.CloseConnection);
                     while (seqReader.Read())
@@ -184,7 +183,7 @@ namespace NMG.Core.Reader
                     var schema = new CUBRIDSchemaProvider(conn);
                     DataTable dt_fk = schema.GetForeignKeys(new[] { table.Name.ToLower() });
 
-                    string sqlInfo = String.Format("select * from [{0}] limit 1", table.Name.ToLower());
+                    string sqlInfo = $"select * from [{table.Name.ToLower()}] limit 1";
                     var adapter = new CUBRIDDataAdapter(sqlInfo, conn);
                     var tableInfo = new DataTable();
                     adapter.FillSchema(tableInfo, SchemaType.Source);

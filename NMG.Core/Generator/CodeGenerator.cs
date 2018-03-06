@@ -29,7 +29,7 @@ namespace NMG.Core.Generator
         {
             var pascalCaseTextFormatter = new PascalCaseTextFormatter { PrefixRemovalList = appPrefs.FieldPrefixRemovalList };
 
-            var className = string.Format("{0}{1}", appPrefs.ClassNamePrefix, pascalCaseTextFormatter.FormatSingular(Table.Name));
+            var className = $"{appPrefs.ClassNamePrefix}{pascalCaseTextFormatter.FormatSingular(Table.Name)}";
             var compileUnit = GetCompileUnit(className);
 
             if (writeToFile)
@@ -91,11 +91,13 @@ namespace NMG.Core.Generator
                 
                     if (appPrefs.Language == Language.CSharp)
                     {
-                        newType.Members.Add(codeGenerationHelper.CreateAutoProperty(string.Format("{0}<{1}{2}>", appPrefs.ForeignEntityCollectionType, appPrefs.ClassNamePrefix, pascalCaseTextFormatter.FormatSingular(hasMany.Reference)), Formatter.FormatPlural(hasMany.Reference), appPrefs.UseLazy));
+                        newType.Members.Add(codeGenerationHelper.CreateAutoProperty(
+	                        $"{appPrefs.ForeignEntityCollectionType}<{appPrefs.ClassNamePrefix}{pascalCaseTextFormatter.FormatSingular(hasMany.Reference)}>", Formatter.FormatPlural(hasMany.Reference), appPrefs.UseLazy));
                         constructorStatements.Add(new CodeSnippetStatement(string.Format(TABS + "{0} = new {1}<{2}{3}>();", Formatter.FormatPlural(hasMany.Reference), codeGenerationHelper.InstatiationObject(appPrefs.ForeignEntityCollectionType), appPrefs.ClassNamePrefix, pascalCaseTextFormatter.FormatSingular(hasMany.Reference))));
                     } else if (appPrefs.Language == Language.VB)
                     {
-                        newType.Members.Add(codeGenerationHelper.CreateAutoProperty(string.Format("{0}(Of {1}{2})", appPrefs.ForeignEntityCollectionType, appPrefs.ClassNamePrefix, pascalCaseTextFormatter.FormatSingular(hasMany.Reference)), Formatter.FormatPlural(hasMany.Reference), appPrefs.UseLazy));
+                        newType.Members.Add(codeGenerationHelper.CreateAutoProperty(
+	                        $"{appPrefs.ForeignEntityCollectionType}(Of {appPrefs.ClassNamePrefix}{pascalCaseTextFormatter.FormatSingular(hasMany.Reference)})", Formatter.FormatPlural(hasMany.Reference), appPrefs.UseLazy));
                         constructorStatements.Add(new CodeSnippetStatement(string.Format(TABS + "{0} = New {1}(Of {2}{3})()", Formatter.FormatPlural(hasMany.Reference), codeGenerationHelper.InstatiationObject(appPrefs.ForeignEntityCollectionType), appPrefs.ClassNamePrefix, pascalCaseTextFormatter.FormatSingular(hasMany.Reference))));
                     }
                 }
@@ -202,7 +204,8 @@ namespace NMG.Core.Generator
                     var propertyName = fk.ForeignKeyTableName;
                     var fieldName = FixPropertyWithSameClassName(propertyName, Table.Name);
 
-                    newType.Members.Add(codeGenerationHelper.CreateField(typeName, string.Format("_{0}", camelCaseFormatter.FormatSingular(fieldName))));
+                    newType.Members.Add(codeGenerationHelper.CreateField(typeName,
+	                    $"_{camelCaseFormatter.FormatSingular(fieldName)}"));
                     newType.Members.Add(codeGenerationHelper.CreateProperty(typeName, Formatter.FormatSingular(fieldName), appPrefs.UseLazy));
                 }
             }
@@ -283,7 +286,7 @@ namespace NMG.Core.Generator
                     var typeName = appPrefs.ClassNamePrefix + pascalCaseTextFormatter.FormatSingular(fk.ForeignKeyTableName);
                     if (String.IsNullOrEmpty(typeName))
                     {
-                        System.Diagnostics.Trace.WriteLine(String.Format("Skipping null ForeignKeyTableName for field {0}", fk.Name));
+                        System.Diagnostics.Trace.WriteLine($"Skipping null ForeignKeyTableName for field {fk.Name}");
                         continue;
                     }
                     var propertyName = Formatter.FormatSingular(fk.ForeignKeyTableName);
@@ -327,12 +330,12 @@ namespace NMG.Core.Generator
             // Create the if statement to compare if the obj equals another.
             var compareCode = new StringBuilder();
 
-            var className = string.Format("{0}{1}", appPrefs.ClassNamePrefix, Formatter.FormatSingular(Table.Name));
+            var className = $"{appPrefs.ClassNamePrefix}{Formatter.FormatSingular(Table.Name)}";
 
             if (appPrefs.Language == Language.CSharp)
             {
                 method.Statements.Add(new CodeSnippetStatement("\t\t\tif (obj == null) return false;"));
-                method.Statements.Add(new CodeSnippetStatement(string.Format("\t\t\tvar t = obj as {0};", className)));
+                method.Statements.Add(new CodeSnippetStatement($"\t\t\tvar t = obj as {className};"));
                 method.Statements.Add(new CodeSnippetStatement("\t\t\tif (t == null) return false;"));
 
                 compareCode.Append("\t\t\tif (");
@@ -350,7 +353,7 @@ namespace NMG.Core.Generator
             } else if (appPrefs.Language == Language.VB)
             {
                 method.Statements.Add(new CodeSnippetStatement("\t\t\tIf obj Is Nothing Then Return False"));
-                method.Statements.Add(new CodeSnippetStatement(string.Format("\t\t\tDim t = TryCast(obj, {0})", className)));
+                method.Statements.Add(new CodeSnippetStatement($"\t\t\tDim t = TryCast(obj, {className})"));
                 method.Statements.Add(new CodeSnippetStatement("\t\t\tIf t Is Nothing Then Return False"));
 
                 compareCode.Append("\t\t\tIf ");
@@ -389,7 +392,7 @@ namespace NMG.Core.Generator
                 foreach (var column in columns)
                 {
                     method.Statements.Add(
-                        new CodeSnippetStatement(string.Format("\t\t\thash = (hash * 397) ^ {0}.GetHashCode();", column)));
+                        new CodeSnippetStatement($"\t\t\thash = (hash * 397) ^ {column}.GetHashCode();"));
                 }
 
                 method.Statements.Add(new CodeSnippetStatement(string.Empty));
@@ -401,7 +404,7 @@ namespace NMG.Core.Generator
 
                 foreach (var column in columns)
                 {
-                    method.Statements.Add(new CodeSnippetStatement(string.Format("\t\t\thash += {0}.GetHashCode()", column)));
+                    method.Statements.Add(new CodeSnippetStatement($"\t\t\thash += {column}.GetHashCode()"));
                 }
 
                 method.Statements.Add(new CodeSnippetStatement(string.Empty));
@@ -532,10 +535,10 @@ namespace NMG.Core.Generator
             {
                 if (appPrefs.Language == Language.CSharp)
                 {
-                    builder.AppendLine(string.Format("using {0};", statement));
+                    builder.AppendLine($"using {statement};");
                 } else if (appPrefs.Language == Language.VB)
                 {
-                    builder.AppendLine(string.Format("Imports {0}", statement));
+                    builder.AppendLine($"Imports {statement}");
                 }
             }
 

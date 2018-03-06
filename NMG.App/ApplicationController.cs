@@ -33,7 +33,6 @@ namespace NHibernateMappingGenerator
                 mappingGenerator = new SqlMappingGenerator(applicationPreferences, table);
             }
         }
-
         public string GeneratedDomainCode { get; set; }
         public string GeneratedMapCode { get; set; }
 
@@ -47,7 +46,7 @@ namespace NHibernateMappingGenerator
                 fluentGenerator.Generate(writeToFile);
                 GeneratedMapCode = fluentGenerator.GeneratedCode;
             }
-            if (applicationPreferences.IsEntityFramework)
+            else if (applicationPreferences.IsEntityFramework)
             {
                 entityFrameworkGenerator.Generate(writeToFile);
                 GeneratedMapCode = entityFrameworkGenerator.GeneratedCode;
@@ -68,7 +67,7 @@ namespace NHibernateMappingGenerator
                 GeneratedMapCode = mappingGenerator.GeneratedCode;
             }
 
-            if(applicationPreferences.GenerateWcfDataContract)
+            if (applicationPreferences.GenerateWcfDataContract)
             {
                 contractGenerator.Generate(writeToFile);
             }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using NMG.Core.Annotations;
 
@@ -82,6 +83,7 @@ namespace NMG.Core.Domain
     /// <summary>
     /// Defines a database column entity;
     /// </summary>
+    [DebuggerVisualizer("")]
     public class Column: INotifyPropertyChanged
     {
         public string Name { get; set; }
@@ -96,8 +98,10 @@ namespace NMG.Core.Domain
 		public string ConstraintName { get; set; }
         public int? DataPrecision { get; set; }
         public int? DataScale { get; set; }
+	    public string Format { get; set; }
         public string ForeignKeyTableName { get; set; }
         public string ForeignKeyColumnName { get; set; }
+        public string Description { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

@@ -11,6 +11,8 @@ using NMG.Core.TextFormatter;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using LumenWorks.Framework.IO.Csv;
+using Column = NMG.Core.Domain.Column;
 
 namespace NHibernateMappingGenerator
 {
@@ -173,6 +175,8 @@ namespace NHibernateMappingGenerator
                 partialClassesCheckBox.Checked = applicationSettings.GeneratePartialClasses;
                 useLazyLoadingCheckBox.Checked = applicationSettings.UseLazy;
                 includeLengthAndScaleCheckBox.Checked = applicationSettings.IncludeLengthAndScale;
+	            chkTextLengthOnly.Checked = applicationSettings.IncludeLengthTextOnly;
+	            chkAlwaysCreateColumnMap.Checked = applicationSettings.AlwaysGenerateColumnMapping;
                 includeForeignKeysCheckBox.Checked = applicationSettings.IncludeForeignKeys;
                 nameAsForeignTableCheckBox.Checked = applicationSettings.NameFkAsForeignTable;
                 includeHasManyCheckBox.Checked = applicationSettings.IncludeHasMany;
@@ -227,21 +231,21 @@ namespace NHibernateMappingGenerator
 
         private void ToggleColumnsBasedOnAppSettings(ApplicationSettings appSettings)
         {
-            var lengthColumn = dbTableDetailsGridView.Columns["DataLength"];
-            if (lengthColumn != null)
-                lengthColumn.Visible = appSettings.IncludeLengthAndScale;
+            //var lengthColumn = dbTableDetailsGridView.Columns["DataLength"];
+            //if (lengthColumn != null)
+            //    lengthColumn.Visible = appSettings.IncludeLengthAndScale;
 
-            var precisionColumn = dbTableDetailsGridView.Columns["DataPrecision"];
-            if (precisionColumn != null)
-                precisionColumn.Visible = appSettings.IncludeLengthAndScale;
+            //var precisionColumn = dbTableDetailsGridView.Columns["DataPrecision"];
+            //if (precisionColumn != null)
+            //    precisionColumn.Visible = appSettings.IncludeLengthAndScale;
 
-            var scaleColumn = dbTableDetailsGridView.Columns["DataScale"];
-            if (scaleColumn != null)
-                scaleColumn.Visible = appSettings.IncludeLengthAndScale;
+            //var scaleColumn = dbTableDetailsGridView.Columns["DataScale"];
+            //if (scaleColumn != null)
+            //    scaleColumn.Visible = appSettings.IncludeLengthAndScale;
 
-            var cSharpTypeColumn = dbTableDetailsGridView.Columns["cSharpType"];
-            if (cSharpTypeColumn != null)
-                cSharpTypeColumn.Visible = !appSettings.IsByCode;
+            //var cSharpTypeColumn = dbTableDetailsGridView.Columns["cSharpType"];
+            //if (cSharpTypeColumn != null)
+            //    cSharpTypeColumn.Visible = !appSettings.IsByCode;
 
             /*var fkTableNameColumn = dbTableDetailsGridView.Columns["ForeignKeyTableName"];
             var fkColNameColumn = dbTableDetailsGridView.Columns["ForeignKeyColumnName"];
@@ -338,6 +342,8 @@ namespace NHibernateMappingGenerator
             applicationSettings.NameFkAsForeignTable = nameAsForeignTableCheckBox.Checked;
             applicationSettings.IncludeHasMany = includeHasManyCheckBox.Checked;
             applicationSettings.IncludeLengthAndScale = includeLengthAndScaleCheckBox.Checked;
+	        applicationSettings.IncludeLengthTextOnly = chkTextLengthOnly.Checked;
+	        applicationSettings.AlwaysGenerateColumnMapping = chkAlwaysCreateColumnMap.Checked;
             applicationSettings.LastUsedConnection = _currentConnection == null ? (Guid?) null : _currentConnection.Id;
         }
 
@@ -457,7 +463,7 @@ namespace NHibernateMappingGenerator
             if (_currentConnection == null)
                 return;
 
-            toolStripStatusLabel.Text = string.Format("Connecting to {0}...", _currentConnection.Name);
+            toolStripStatusLabel.Text = $"Connecting to {_currentConnection.Name}...";
             statusStrip1.Refresh();
             Cursor.Current = Cursors.WaitCursor;
             try
@@ -578,7 +584,7 @@ namespace NHibernateMappingGenerator
             {
                 foreach (var selectedItem in selectedItems)
                 {
-                    toolStripStatusLabel.Text = string.Format("Generating {0} mapping file ...", selectedItem);
+                    toolStripStatusLabel.Text = $"Generating {selectedItem} mapping file ...";
                     var table = (Table)selectedItem;
                     metadataReader.GetTableDetails(table, ownersComboBox.SelectedItem.ToString());
                     CaptureApplicationSettings();
@@ -741,6 +747,8 @@ namespace NHibernateMappingGenerator
                                                  NameFkAsForeignTable = appSettings.NameFkAsForeignTable,
                                                  IncludeHasMany = appSettings.IncludeHasMany,
                                                  IncludeLengthAndScale = appSettings.IncludeLengthAndScale,
+												 IncludeLengthTextOnly = appSettings.IncludeLengthTextOnly,
+												 AlwaysGenerateColumnMapping = appSettings.AlwaysGenerateColumnMapping,
                                                  ValidatorStyle = appSettings.ValidationStyle
                                              };
 
@@ -875,7 +883,9 @@ namespace NHibernateMappingGenerator
 
             // Show map and domain code preview
             ApplicationPreferences applicationPreferences = GetApplicationPreferences(table, false, applicationSettings);
-            var applicationController = new ApplicationController(applicationPreferences, table);
+	        SetPreMapData(applicationPreferences);
+
+			var applicationController = new ApplicationController(applicationPreferences, table);
             applicationController.Generate(false);
             mapCodeFastColoredTextBox.Text = applicationController.GeneratedMapCode;
             domainCodeFastColoredTextBox.Text = applicationController.GeneratedDomainCode;
@@ -886,5 +896,36 @@ namespace NHibernateMappingGenerator
             nameAsForeignTableCheckBox.Enabled = includeForeignKeysCheckBox.Checked;
         }
 
+		private void btnScreenGenerate_Click(object sender, EventArgs e)
+		{
+			_cachedTableListSelection.Clear();
+			TablesListSelectedIndexChanged(this, null);
+		}
+
+	    private void SetPreMapData(ApplicationPreferences s)
+	    {
+			var d = new Dictionary<string, string>();
+		    string txt = txtPreMap.Text;
+		    using (TextReader sr = new StringReader(txt))
+			using (CsvReader csv = new CsvReader(sr, false))
+		    {
+			    while (csv.ReadNextRecord())
+			    {
+				    string v;
+			        if (!d.TryGetValue(csv[1], out v))
+			        {
+                        string property = csv[0];//.Replace("Property(x => x.", "").Trim();
+                        string dbColumnName = csv[1].Trim().ToLower();/*.Replace("map => map.Column(\"", "").Replace("\"));", "")*/
+                        d.Add(dbColumnName, property);
+			        }
+			    }
+		    }
+		    s.PreMap = d;
+	    }
+
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            OnTableDetailsCellDirty(this, null);
+        }
     }
 }

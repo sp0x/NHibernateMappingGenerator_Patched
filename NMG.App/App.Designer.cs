@@ -66,12 +66,14 @@ namespace NHibernateMappingGenerator
             this.TableFilterTextBox = new System.Windows.Forms.TextBox();
             this.tablesListBox = new System.Windows.Forms.ListBox();
             this.ownersComboBox = new System.Windows.Forms.ComboBox();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabCtrlMap = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.mapCodeFastColoredTextBox = new FastColoredTextBoxNS.FastColoredTextBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.domainCodeFastColoredTextBox = new FastColoredTextBoxNS.FastColoredTextBox();
+            this.tabPg = new System.Windows.Forms.TabPage();
+            this.txtPreMap = new FastColoredTextBoxNS.FastColoredTextBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.cancelButton = new System.Windows.Forms.Button();
             this.label9 = new System.Windows.Forms.Label();
@@ -81,6 +83,7 @@ namespace NHibernateMappingGenerator
             this.domainFolderTextBox = new System.Windows.Forms.TextBox();
             this.domainFolderSelectButton = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
+            this.btnScreenGenerate = new System.Windows.Forms.Button();
             this.namespaceMapTextBox = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.connectionNameComboBox = new System.Windows.Forms.ComboBox();
@@ -105,6 +108,8 @@ namespace NHibernateMappingGenerator
             this.textBoxClassNamePrefix = new System.Windows.Forms.TextBox();
             this.textBoxInheritence = new System.Windows.Forms.TextBox();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.chkTextLengthOnly = new System.Windows.Forms.CheckBox();
+            this.chkAlwaysCreateColumnMap = new System.Windows.Forms.CheckBox();
             this.nameAsForeignTableCheckBox = new System.Windows.Forms.CheckBox();
             this.includeHasManyCheckBox = new System.Windows.Forms.CheckBox();
             this.includeLengthAndScaleCheckBox = new System.Windows.Forms.CheckBox();
@@ -118,6 +123,7 @@ namespace NHibernateMappingGenerator
             this.noValidationRadioButton = new System.Windows.Forms.RadioButton();
             this.nhibernateValidationRadioButton = new System.Windows.Forms.RadioButton();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.entityFrameworkRadionBtn = new System.Windows.Forms.RadioButton();
             this.castleMappingOption = new System.Windows.Forms.RadioButton();
             this.fluentMappingOption = new System.Windows.Forms.RadioButton();
             this.hbmMappingOption = new System.Windows.Forms.RadioButton();
@@ -136,7 +142,7 @@ namespace NHibernateMappingGenerator
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
-            this.entityFrameworkRadionBtn = new System.Windows.Forms.RadioButton();
+            this.btnRefresh = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dbTableDetailsGridView)).BeginInit();
             this.mainTabControl.SuspendLayout();
             this.basicSettingsTabPage.SuspendLayout();
@@ -145,12 +151,14 @@ namespace NHibernateMappingGenerator
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.tableGroupBox.SuspendLayout();
-            this.tabControl1.SuspendLayout();
+            this.tabCtrlMap.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mapCodeFastColoredTextBox)).BeginInit();
             this.tabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.domainCodeFastColoredTextBox)).BeginInit();
+            this.tabPg.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.txtPreMap)).BeginInit();
             this.groupBox5.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.pOracleOnlyOptions.SuspendLayout();
@@ -415,7 +423,7 @@ namespace NHibernateMappingGenerator
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
+            this.splitContainer1.Panel2.Controls.Add(this.tabCtrlMap);
             this.splitContainer1.Panel2.Padding = new System.Windows.Forms.Padding(0, 6, 0, 0);
             this.splitContainer1.Size = new System.Drawing.Size(1159, 383);
             this.splitContainer1.SplitterDistance = 228;
@@ -470,17 +478,18 @@ namespace NHibernateMappingGenerator
             this.ownersComboBox.Size = new System.Drawing.Size(217, 21);
             this.ownersComboBox.TabIndex = 19;
             // 
-            // tabControl1
+            // tabCtrlMap
             // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Controls.Add(this.tabPage3);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(0, 6);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(927, 377);
-            this.tabControl1.TabIndex = 22;
+            this.tabCtrlMap.Controls.Add(this.tabPage1);
+            this.tabCtrlMap.Controls.Add(this.tabPage2);
+            this.tabCtrlMap.Controls.Add(this.tabPage3);
+            this.tabCtrlMap.Controls.Add(this.tabPg);
+            this.tabCtrlMap.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabCtrlMap.Location = new System.Drawing.Point(0, 6);
+            this.tabCtrlMap.Name = "tabCtrlMap";
+            this.tabCtrlMap.SelectedIndex = 0;
+            this.tabCtrlMap.Size = new System.Drawing.Size(927, 377);
+            this.tabCtrlMap.TabIndex = 22;
             // 
             // tabPage1
             // 
@@ -506,8 +515,21 @@ namespace NHibernateMappingGenerator
             // 
             // mapCodeFastColoredTextBox
             // 
-            this.mapCodeFastColoredTextBox.AutoScrollMinSize = new System.Drawing.Size(27, 14);
+            this.mapCodeFastColoredTextBox.AutoCompleteBracketsList = new char[] {
+        '(',
+        ')',
+        '{',
+        '}',
+        '[',
+        ']',
+        '\"',
+        '\"',
+        '\'',
+        '\''};
+            this.mapCodeFastColoredTextBox.AutoScrollMinSize = new System.Drawing.Size(2, 14);
             this.mapCodeFastColoredTextBox.BackBrush = null;
+            this.mapCodeFastColoredTextBox.CharHeight = 14;
+            this.mapCodeFastColoredTextBox.CharWidth = 8;
             this.mapCodeFastColoredTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.mapCodeFastColoredTextBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.mapCodeFastColoredTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -516,8 +538,10 @@ namespace NHibernateMappingGenerator
             this.mapCodeFastColoredTextBox.Name = "mapCodeFastColoredTextBox";
             this.mapCodeFastColoredTextBox.Paddings = new System.Windows.Forms.Padding(0);
             this.mapCodeFastColoredTextBox.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.mapCodeFastColoredTextBox.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("mapCodeFastColoredTextBox.ServiceColors")));
             this.mapCodeFastColoredTextBox.Size = new System.Drawing.Size(913, 345);
             this.mapCodeFastColoredTextBox.TabIndex = 0;
+            this.mapCodeFastColoredTextBox.Zoom = 100;
             // 
             // tabPage3
             // 
@@ -532,8 +556,21 @@ namespace NHibernateMappingGenerator
             // 
             // domainCodeFastColoredTextBox
             // 
-            this.domainCodeFastColoredTextBox.AutoScrollMinSize = new System.Drawing.Size(27, 14);
+            this.domainCodeFastColoredTextBox.AutoCompleteBracketsList = new char[] {
+        '(',
+        ')',
+        '{',
+        '}',
+        '[',
+        ']',
+        '\"',
+        '\"',
+        '\'',
+        '\''};
+            this.domainCodeFastColoredTextBox.AutoScrollMinSize = new System.Drawing.Size(2, 14);
             this.domainCodeFastColoredTextBox.BackBrush = null;
+            this.domainCodeFastColoredTextBox.CharHeight = 14;
+            this.domainCodeFastColoredTextBox.CharWidth = 8;
             this.domainCodeFastColoredTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.domainCodeFastColoredTextBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.domainCodeFastColoredTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -542,8 +579,52 @@ namespace NHibernateMappingGenerator
             this.domainCodeFastColoredTextBox.Name = "domainCodeFastColoredTextBox";
             this.domainCodeFastColoredTextBox.Paddings = new System.Windows.Forms.Padding(0);
             this.domainCodeFastColoredTextBox.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.domainCodeFastColoredTextBox.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("domainCodeFastColoredTextBox.ServiceColors")));
             this.domainCodeFastColoredTextBox.Size = new System.Drawing.Size(913, 345);
             this.domainCodeFastColoredTextBox.TabIndex = 0;
+            this.domainCodeFastColoredTextBox.Zoom = 100;
+            // 
+            // tabPg
+            // 
+            this.tabPg.Controls.Add(this.txtPreMap);
+            this.tabPg.Location = new System.Drawing.Point(4, 22);
+            this.tabPg.Name = "tabPg";
+            this.tabPg.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPg.Size = new System.Drawing.Size(919, 351);
+            this.tabPg.TabIndex = 3;
+            this.tabPg.Text = "Pre-Map";
+            this.tabPg.UseVisualStyleBackColor = true;
+            // 
+            // txtPreMap
+            // 
+            this.txtPreMap.AutoCompleteBracketsList = new char[] {
+        '(',
+        ')',
+        '{',
+        '}',
+        '[',
+        ']',
+        '\"',
+        '\"',
+        '\'',
+        '\''};
+            this.txtPreMap.AutoScrollMinSize = new System.Drawing.Size(2, 14);
+            this.txtPreMap.BackBrush = null;
+            this.txtPreMap.CharHeight = 14;
+            this.txtPreMap.CharWidth = 8;
+            this.txtPreMap.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.txtPreMap.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
+            this.txtPreMap.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtPreMap.Font = new System.Drawing.Font("Courier New", 9.75F);
+            this.txtPreMap.IsReplaceMode = false;
+            this.txtPreMap.Location = new System.Drawing.Point(3, 3);
+            this.txtPreMap.Name = "txtPreMap";
+            this.txtPreMap.Paddings = new System.Windows.Forms.Padding(0);
+            this.txtPreMap.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtPreMap.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("txtPreMap.ServiceColors")));
+            this.txtPreMap.Size = new System.Drawing.Size(913, 345);
+            this.txtPreMap.TabIndex = 1;
+            this.txtPreMap.Zoom = 100;
             // 
             // groupBox5
             // 
@@ -561,6 +642,7 @@ namespace NHibernateMappingGenerator
             this.groupBox5.Controls.Add(this.assemblyNameTextBox);
             this.groupBox5.Controls.Add(this.label4);
             this.groupBox5.Controls.Add(this.label2);
+            this.groupBox5.Controls.Add(this.btnScreenGenerate);
             this.groupBox5.Controls.Add(this.generateButton);
             this.groupBox5.Controls.Add(this.label3);
             this.groupBox5.Controls.Add(this.namespaceMapTextBox);
@@ -643,6 +725,16 @@ namespace NHibernateMappingGenerator
             this.label4.TabIndex = 11;
             this.label4.Text = "Namespace (Map) :";
             // 
+            // btnScreenGenerate
+            // 
+            this.btnScreenGenerate.Location = new System.Drawing.Point(123, 205);
+            this.btnScreenGenerate.Name = "btnScreenGenerate";
+            this.btnScreenGenerate.Size = new System.Drawing.Size(106, 23);
+            this.btnScreenGenerate.TabIndex = 8;
+            this.btnScreenGenerate.Text = "&Generate 2";
+            this.btnScreenGenerate.UseVisualStyleBackColor = true;
+            this.btnScreenGenerate.Click += new System.EventHandler(this.btnScreenGenerate_Click);
+            // 
             // namespaceMapTextBox
             // 
             this.namespaceMapTextBox.Location = new System.Drawing.Point(130, 150);
@@ -658,6 +750,7 @@ namespace NHibernateMappingGenerator
             this.groupBox4.Controls.Add(this.dbConnStrLabel);
             this.groupBox4.Controls.Add(this.connectionButton);
             this.groupBox4.Controls.Add(this.connectBtn);
+            this.groupBox4.Controls.Add(this.btnRefresh);
             this.groupBox4.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox4.Location = new System.Drawing.Point(3, 3);
             this.groupBox4.Name = "groupBox4";
@@ -886,6 +979,8 @@ namespace NHibernateMappingGenerator
             // 
             // groupBox7
             // 
+            this.groupBox7.Controls.Add(this.chkTextLengthOnly);
+            this.groupBox7.Controls.Add(this.chkAlwaysCreateColumnMap);
             this.groupBox7.Controls.Add(this.nameAsForeignTableCheckBox);
             this.groupBox7.Controls.Add(this.includeHasManyCheckBox);
             this.groupBox7.Controls.Add(this.includeLengthAndScaleCheckBox);
@@ -900,6 +995,26 @@ namespace NHibernateMappingGenerator
             this.groupBox7.TabIndex = 7;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Field Or Property";
+            // 
+            // chkTextLengthOnly
+            // 
+            this.chkTextLengthOnly.AutoSize = true;
+            this.chkTextLengthOnly.Location = new System.Drawing.Point(6, 201);
+            this.chkTextLengthOnly.Name = "chkTextLengthOnly";
+            this.chkTextLengthOnly.Size = new System.Drawing.Size(160, 17);
+            this.chkTextLengthOnly.TabIndex = 13;
+            this.chkTextLengthOnly.Text = "Include Length for Text Only";
+            this.chkTextLengthOnly.UseVisualStyleBackColor = true;
+            // 
+            // chkAlwaysCreateColumnMap
+            // 
+            this.chkAlwaysCreateColumnMap.AutoSize = true;
+            this.chkAlwaysCreateColumnMap.Location = new System.Drawing.Point(6, 224);
+            this.chkAlwaysCreateColumnMap.Name = "chkAlwaysCreateColumnMap";
+            this.chkAlwaysCreateColumnMap.Size = new System.Drawing.Size(155, 17);
+            this.chkAlwaysCreateColumnMap.TabIndex = 12;
+            this.chkAlwaysCreateColumnMap.Text = "Always Create Column Map";
+            this.chkAlwaysCreateColumnMap.UseVisualStyleBackColor = true;
             // 
             // nameAsForeignTableCheckBox
             // 
@@ -1041,6 +1156,17 @@ namespace NHibernateMappingGenerator
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Mapping Style";
+            // 
+            // entityFrameworkRadionBtn
+            // 
+            this.entityFrameworkRadionBtn.AutoSize = true;
+            this.entityFrameworkRadionBtn.Location = new System.Drawing.Point(6, 109);
+            this.entityFrameworkRadionBtn.Name = "entityFrameworkRadionBtn";
+            this.entityFrameworkRadionBtn.Size = new System.Drawing.Size(106, 17);
+            this.entityFrameworkRadionBtn.TabIndex = 11;
+            this.entityFrameworkRadionBtn.TabStop = true;
+            this.entityFrameworkRadionBtn.Text = "Entity Framework";
+            this.entityFrameworkRadionBtn.UseVisualStyleBackColor = true;
             // 
             // castleMappingOption
             // 
@@ -1224,7 +1350,7 @@ namespace NHibernateMappingGenerator
             this.toolStripStatusLabel.BorderStyle = System.Windows.Forms.Border3DStyle.SunkenOuter;
             this.toolStripStatusLabel.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.toolStripStatusLabel.ForeColor = System.Drawing.Color.Red;
-            this.toolStripStatusLabel.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel.Name = "toolStripStatusLabel";
             this.toolStripStatusLabel.Size = new System.Drawing.Size(856, 17);
             this.toolStripStatusLabel.Spring = true;
             this.toolStripStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -1235,16 +1361,15 @@ namespace NHibernateMappingGenerator
             this.toolStripProgressBar1.Name = "toolStripProgressBar1";
             this.toolStripProgressBar1.Size = new System.Drawing.Size(300, 16);
             // 
-            // entityFrameworkRadionBtn
+            // btnRefresh
             // 
-            this.entityFrameworkRadionBtn.AutoSize = true;
-            this.entityFrameworkRadionBtn.Location = new System.Drawing.Point(6, 109);
-            this.entityFrameworkRadionBtn.Name = "entityFrameworkRadionBtn";
-            this.entityFrameworkRadionBtn.Size = new System.Drawing.Size(106, 17);
-            this.entityFrameworkRadionBtn.TabIndex = 11;
-            this.entityFrameworkRadionBtn.TabStop = true;
-            this.entityFrameworkRadionBtn.Text = "Entity Framework";
-            this.entityFrameworkRadionBtn.UseVisualStyleBackColor = true;
+            this.btnRefresh.Location = new System.Drawing.Point(337, 30);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(52, 23);
+            this.btnRefresh.TabIndex = 8;
+            this.btnRefresh.Text = "Refresh";
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
             // App
             // 
@@ -1266,12 +1391,14 @@ namespace NHibernateMappingGenerator
             this.splitContainer1.ResumeLayout(false);
             this.tableGroupBox.ResumeLayout(false);
             this.tableGroupBox.PerformLayout();
-            this.tabControl1.ResumeLayout(false);
+            this.tabCtrlMap.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.mapCodeFastColoredTextBox)).EndInit();
             this.tabPage3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.domainCodeFastColoredTextBox)).EndInit();
+            this.tabPg.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.txtPreMap)).EndInit();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
             this.groupBox4.ResumeLayout(false);
@@ -1374,7 +1501,7 @@ namespace NHibernateMappingGenerator
         private ComboBox connectionNameComboBox;
         private Button connectionButton;
         private SplitContainer splitContainer1;
-        private TabControl tabControl1;
+        private TabControl tabCtrlMap;
         private TabPage tabPage1;
         private TabPage tabPage2;
         private TabPage tabPage3;
@@ -1408,6 +1535,12 @@ namespace NHibernateMappingGenerator
         private CheckBox EnableInflectionsCheckBox;
         private CheckBox nameAsForeignTableCheckBox;
         private RadioButton entityFrameworkRadionBtn;
+		private CheckBox chkAlwaysCreateColumnMap;
+		private TabPage tabPg;
+		private FastColoredTextBoxNS.FastColoredTextBox txtPreMap;
+		private CheckBox chkTextLengthOnly;
+		private Button btnScreenGenerate;
+        private Button btnRefresh;
     }
 }
 

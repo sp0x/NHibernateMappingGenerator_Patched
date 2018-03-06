@@ -74,6 +74,10 @@ namespace NHibernateMappingGenerator
 
         public bool IncludeLengthAndScale { get; set; }
 
+	    public bool IncludeLengthTextOnly { get; set; }
+
+		public bool AlwaysGenerateColumnMapping { get; set; }
+
         public List<string> FieldPrefixRemovalList { get; set; }
 
         public ValidationStyle ValidationStyle { get; set; }

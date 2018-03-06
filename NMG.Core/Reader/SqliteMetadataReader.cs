@@ -26,7 +26,7 @@ namespace NMG.Core.Reader
                 {
                     using (var tableDetailsCommand = sqlCon.CreateCommand())
                     {
-                        tableDetailsCommand.CommandText = string.Format("SELECT * FROM {0}", table.Name);
+                        tableDetailsCommand.CommandText = $"SELECT * FROM {table.Name}";
                         sqlCon.Open();
 
                         var dr = tableDetailsCommand.ExecuteReader(CommandBehavior.SchemaOnly);

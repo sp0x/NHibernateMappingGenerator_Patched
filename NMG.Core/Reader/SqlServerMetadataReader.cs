@@ -28,8 +28,8 @@ namespace NMG.Core.Reader
 			try {
 				using (conn) {
 					using (var tableDetailsCommand = conn.CreateCommand()) {
-						tableDetailsCommand.CommandText = string.Format(
-                            @"SELECT distinct c.column_name, c.data_type, c.is_nullable, tc.constraint_type, convert(int,c.numeric_precision) numeric_precision, c.numeric_scale, c.character_maximum_length, c.table_name, c.ordinal_position, tc.constraint_name,
+						tableDetailsCommand.CommandText =
+							$@"SELECT distinct c.column_name, c.data_type, c.is_nullable, tc.constraint_type, convert(int,c.numeric_precision) numeric_precision, c.numeric_scale, c.character_maximum_length, c.table_name, c.ordinal_position, tc.constraint_name,
        columnproperty(object_id(c.table_schema + '.' + c.table_name), c.column_name,'IsIdentity') IsIdentity, 
        (SELECT CASE WHEN count(1) = 0 THEN 0 ELSE 1 END 
        FROM information_schema.table_constraints x 
@@ -48,10 +48,9 @@ from information_schema.columns c
 		and c.table_name = ccu.table_name
 		and c.column_name = ccu.column_name
 	)
-						where c.table_name = '{0}'
-							  and c.table_schema ='{1}'
-						order by c.table_name, c.ordinal_position",
-							table.Name.Replace("'", "''"), owner);
+						where c.table_name = '{table.Name.Replace("'", "''")}'
+							  and c.table_schema ='{owner}'
+						order by c.table_name, c.ordinal_position";
 
 						using (var sqlDataReader = tableDetailsCommand.ExecuteReader(CommandBehavior.Default)) {
 							while (sqlDataReader.Read()) {
@@ -144,7 +143,8 @@ from information_schema.columns c
 			try {
 				using (conn) {
 					var tableCommand = conn.CreateCommand();
-					tableCommand.CommandText = String.Format("select table_name from information_schema.tables where table_type in ('BASE TABLE','VIEW') AND TABLE_SCHEMA = '{0}'", owner);
+					tableCommand.CommandText =
+						$"select table_name from information_schema.tables where table_type in ('BASE TABLE','VIEW') AND TABLE_SCHEMA = '{owner}'";
 					var sqlDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
 					while (sqlDataReader.Read()) {
 						var tableName = sqlDataReader.GetString(0);
@@ -228,8 +228,7 @@ from information_schema.columns c
 			        {
 
 			            SqlCommand tableCommand = conn.CreateCommand();
-			            tableDetailsCommand.CommandText = String.Format(
-			                @"
+			            tableDetailsCommand.CommandText = $@"
 SELECT  
      KCU1.CONSTRAINT_NAME AS FK_CONSTRAINT_NAME 
     ,KCU1.TABLE_NAME AS FK_TABLE_NAME 
@@ -259,8 +258,7 @@ LEFT JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS TC
 LEFT JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS KU 
 	ON TC.CONSTRAINT_TYPE = 'PRIMARY KEY' AND 
 	   TC.CONSTRAINT_NAME = KU.CONSTRAINT_NAME
-WHERE KCU1.CONSTRAINT_NAME = '{0}'",
-			                constraintName);
+WHERE KCU1.CONSTRAINT_NAME = '{constraintName}'";
 
 			            using (var sqlDataReader = tableDetailsCommand.ExecuteReader(CommandBehavior.Default))
 			            {
@@ -290,8 +288,7 @@ WHERE KCU1.CONSTRAINT_NAME = '{0}'",
 					using (var command = new SqlCommand()) {
 						command.Connection = conn;
 						command.CommandText =
-							String.Format(
-								@"
+							$@"
 						SELECT DISTINCT 
 							PK_TABLE = b.TABLE_NAME,
 							FK_TABLE = c.TABLE_NAME,
@@ -301,9 +298,8 @@ WHERE KCU1.CONSTRAINT_NAME = '{0}'",
 						  JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS b ON a.CONSTRAINT_SCHEMA = b.CONSTRAINT_SCHEMA AND a.UNIQUE_CONSTRAINT_NAME = b.CONSTRAINT_NAME 
 						  JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS c ON a.CONSTRAINT_SCHEMA = c.CONSTRAINT_SCHEMA AND a.CONSTRAINT_NAME = c.CONSTRAINT_NAME
 						  JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE d on a.CONSTRAINT_NAME = d.CONSTRAINT_NAME
-						WHERE b.TABLE_NAME = '{0}'
-						ORDER BY 1,2",
-								table.Name.Replace("'","''"));
+						WHERE b.TABLE_NAME = '{table.Name.Replace("'", "''")}'
+						ORDER BY 1,2";
 						SqlDataReader reader = command.ExecuteReader();
 
 						while (reader.Read()) {

@@ -30,7 +30,7 @@ namespace NMG.Core.Reader
                 {
                     using (MySqlCommand tableDetailsCommand = conn.CreateCommand())
                     {
-                        tableDetailsCommand.CommandText = string.Format(@"DESCRIBE {0}.{1}", owner, table);
+                        tableDetailsCommand.CommandText = $@"DESCRIBE {owner}.{table}";
                         using (MySqlDataReader sqlDataReader = tableDetailsCommand.ExecuteReader(CommandBehavior.Default))
                         {
                             while (sqlDataReader.Read())
@@ -134,7 +134,8 @@ namespace NMG.Core.Reader
                 using (conn)
                 {
                     var tableCommand = conn.CreateCommand();
-                    tableCommand.CommandText = String.Format("select table_name from information_schema.tables where table_type like 'BASE TABLE' and TABLE_SCHEMA = '{0}'", owner);
+                    tableCommand.CommandText =
+	                    $"select table_name from information_schema.tables where table_type like 'BASE TABLE' and TABLE_SCHEMA = '{owner}'";
                     var sqlDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
                     while (sqlDataReader.Read())
                     {
@@ -274,15 +275,16 @@ namespace NMG.Core.Reader
                 using (conn)
                 {
                     MySqlCommand tableCommand = conn.CreateCommand();
-                    tableCommand.CommandText = String.Format(
-                        @"SELECT ke.referenced_table_name parent, ke.table_name child, ke.constraint_name
+                    tableCommand.CommandText =
+	                    $@"SELECT ke.referenced_table_name parent, ke.table_name child, ke.constraint_name
                     FROM
                     information_schema.KEY_COLUMN_USAGE ke
                     WHERE
-                    ke.referenced_table_name IS NOT NULL and ke.table_name = '{0}' and ke.column_name = '{1}'
+                    ke.referenced_table_name IS NOT NULL and ke.table_name = '{
+		                    selectedTableName
+	                    }' and ke.column_name = '{columnName}'
                     ORDER BY
-                    ke.table_name",
-                        selectedTableName, columnName);
+                    ke.table_name";
                     referencedTableName = tableCommand.ExecuteScalar();
                 }
             }
@@ -307,8 +309,7 @@ namespace NMG.Core.Reader
                     {
                         command.Connection = conn;
                         command.CommandText =
-                            String.Format(
-                                @"
+	                        $@"
                           SELECT
                     ke.referenced_table_name parent,
                     ke.table_name child,
@@ -316,10 +317,9 @@ namespace NMG.Core.Reader
                     FROM
                     information_schema.KEY_COLUMN_USAGE ke
                     WHERE
-                    ke.referenced_table_name = '{0}' and ke.constraint_schema = '{1}'
+                    ke.referenced_table_name = '{table.Name}' and ke.constraint_schema = '{conn.Database}'
                     ORDER BY
-                    ke.table_name",
-                                table.Name, conn.Database);
+                    ke.table_name";
                         MySqlDataReader reader = command.ExecuteReader();
 
                         while (reader.Read())

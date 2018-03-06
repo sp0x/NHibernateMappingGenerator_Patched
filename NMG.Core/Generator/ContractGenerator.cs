@@ -80,7 +80,7 @@ namespace NMG.Core.Generator
 
         protected override string AddStandardHeader(string entireContent)
         {
-            entireContent = string.Format("using {0};", appPrefs.NameSpace) + Environment.NewLine + entireContent;
+            entireContent = $"using {appPrefs.NameSpace};" + Environment.NewLine + entireContent;
             return base.AddStandardHeader(entireContent);
         }
 

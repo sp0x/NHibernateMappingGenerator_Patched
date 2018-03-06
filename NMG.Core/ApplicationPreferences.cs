@@ -12,7 +12,9 @@ namespace NMG.Core
             Prefix = string.Empty;
         }
 
-        public string TableName { get; set; }
+	    public Dictionary<string, string> PreMap { get; set; } = new Dictionary<string, string>();
+
+	    public string TableName { get; set; }
 
         public string FolderPath { get; set; }
 
@@ -74,7 +76,11 @@ namespace NMG.Core
 
         public bool IncludeLengthAndScale { get; set; }
 
-        public List<string> FieldPrefixRemovalList { get; set; }
+		public bool IncludeLengthTextOnly { get; set; }
+
+		public bool AlwaysGenerateColumnMapping { get; set; }
+
+		public List<string> FieldPrefixRemovalList { get; set; }
 
         public ValidationStyle ValidatorStyle { get; set; }
 

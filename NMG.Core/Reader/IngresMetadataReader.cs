@@ -28,17 +28,11 @@ namespace NMG.Core.Reader
                 {
                     using (var tableDetailsCommand = conn.CreateCommand())
                     {
-                        tableDetailsCommand.CommandText = string.Format("SELECT" +
-                                                                        " column_name," +
-                                                                        " column_datatype," +
-                                                                        " column_nulls," +
-                                                                        " column_length," +
-                                                                        " column_scale " +
-                                                                        "FROM iicolumns " +
-                                                                        "WHERE table_owner = '{0}' " +
-                                                                        "AND table_name = '{1}' " +
-                                                                        "ORDER BY column_sequence",
-                                                                        owner, table.Name);
+                        tableDetailsCommand.CommandText = "SELECT" + " column_name," + " column_datatype," +
+                                                          " column_nulls," + " column_length," + " column_scale " +
+                                                          "FROM iicolumns " + $"WHERE table_owner = '{owner}' " +
+                                                          $"AND table_name = '{table.Name}' " +
+                                                          "ORDER BY column_sequence";
 
                         using (var sqlDataReader = tableDetailsCommand.ExecuteReader(CommandBehavior.Default))
                         {
@@ -93,21 +87,15 @@ namespace NMG.Core.Reader
             {
                 using (var command = conn.CreateCommand())
                 {
-                    command.CommandText = String.Format("SELECT f.table_name " +
-                                                        "FROM iiref_constraints rc " +
-                                                        "INNER JOIN iikeys p " +
-                                                        "ON p.schema_name = rc.unique_schema_name " +
-                                                        "AND p.constraint_name = rc.unique_constraint_name " +
-                                                        "INNER JOIN iiconstraints c " +
-                                                        "ON c.schema_name = rc.ref_schema_name " +
-                                                        "AND c.constraint_name = rc.ref_constraint_name " +
-                                                        "INNER JOIN iikeys f " +
-                                                        "ON f.constraint_name = rc.ref_constraint_name " +
-                                                        "AND p.key_position = f.key_position " +
-                                                        "WHERE p.schema_name = '{0}' " +
-                                                        "AND p.table_name = '{1}'",
-                                                        table.Owner,
-                                                        table.Name);
+                    command.CommandText = "SELECT f.table_name " + "FROM iiref_constraints rc " +
+                                          "INNER JOIN iikeys p " + "ON p.schema_name = rc.unique_schema_name " +
+                                          "AND p.constraint_name = rc.unique_constraint_name " +
+                                          "INNER JOIN iiconstraints c " + "ON c.schema_name = rc.ref_schema_name " +
+                                          "AND c.constraint_name = rc.ref_constraint_name " + "INNER JOIN iikeys f " +
+                                          "ON f.constraint_name = rc.ref_constraint_name " +
+                                          "AND p.key_position = f.key_position " +
+                                          $"WHERE p.schema_name = '{table.Owner}' " +
+                                          $"AND p.table_name = '{table.Name}'";
                     using (var reader = command.ExecuteReader())
                     {
                         while (reader.Read())
@@ -194,15 +182,13 @@ namespace NMG.Core.Reader
                 {
                     using (var tableDetailsCommand = conn.CreateCommand())
                     {
-                        tableDetailsCommand.CommandText = string.Format("SELECT COUNT(0) " +
-                                                                        "FROM iikeys k " +
-                                                                        "INNER JOIN iiconstraints c " +
-                                                                        "ON k.constraint_name = c.constraint_name " +
-                                                                        "WHERE c.constraint_type = 'P' " +
-                                                                        "AND k.schema_name = '{0}' " +
-                                                                        "AND k.table_name = '{1}' " +
-                                                                        "AND k.column_name = '{2}'",
-                                                                        owner, tableName, columnName);
+                        tableDetailsCommand.CommandText = "SELECT COUNT(0) " + "FROM iikeys k " +
+                                                          "INNER JOIN iiconstraints c " +
+                                                          "ON k.constraint_name = c.constraint_name " +
+                                                          "WHERE c.constraint_type = 'P' " +
+                                                          $"AND k.schema_name = '{owner}' " +
+                                                          $"AND k.table_name = '{tableName}' " +
+                                                          $"AND k.column_name = '{columnName}'";
                         var obj = tableDetailsCommand.ExecuteScalar();
 
                         int result;
@@ -229,15 +215,13 @@ namespace NMG.Core.Reader
                 {
                     using (var tableDetailsCommand = conn.CreateCommand())
                     {
-                        tableDetailsCommand.CommandText = string.Format("SELECT COUNT(0) " +
-                                                                        "FROM iikeys k " +
-                                                                        "INNER JOIN iiconstraints c " +
-                                                                        "ON k.constraint_name = c.constraint_name " +
-                                                                        "WHERE c.constraint_type = 'R' " +
-                                                                        "AND k.schema_name = '{0}' " +
-                                                                        "AND k.table_name = '{1}' " +
-                                                                        "AND k.column_name = '{2}'",
-                                                                        owner, tableName, columnName);
+                        tableDetailsCommand.CommandText = "SELECT COUNT(0) " + "FROM iikeys k " +
+                                                          "INNER JOIN iiconstraints c " +
+                                                          "ON k.constraint_name = c.constraint_name " +
+                                                          "WHERE c.constraint_type = 'R' " +
+                                                          $"AND k.schema_name = '{owner}' " +
+                                                          $"AND k.table_name = '{tableName}' " +
+                                                          $"AND k.column_name = '{columnName}'";
                         var obj = tableDetailsCommand.ExecuteScalar();
 
                         int result;
@@ -264,15 +248,13 @@ namespace NMG.Core.Reader
                 {
                     using (var tableDetailsCommand = conn.CreateCommand())
                     {
-                        tableDetailsCommand.CommandText = string.Format("SELECT k.constraint_name " +
-                                                                        "FROM iikeys k " +
-                                                                        "INNER JOIN iiconstraints c " +
-                                                                        "ON k.constraint_name = c.constraint_name " +
-                                                                        "WHERE c.constraint_type = 'R' " +
-                                                                        "AND k.schema_name = '{0}' " +
-                                                                        "AND k.table_name = '{1}' " +
-                                                                        "AND k.column_name = '{2}'",
-                                                                        owner, tableName, columnName);
+                        tableDetailsCommand.CommandText = "SELECT k.constraint_name " + "FROM iikeys k " +
+                                                          "INNER JOIN iiconstraints c " +
+                                                          "ON k.constraint_name = c.constraint_name " +
+                                                          "WHERE c.constraint_type = 'R' " +
+                                                          $"AND k.schema_name = '{owner}' " +
+                                                          $"AND k.table_name = '{tableName}' " +
+                                                          $"AND k.column_name = '{columnName}'";
                         var result = tableDetailsCommand.ExecuteScalar();
                         return result == null ? String.Empty : result.ToString();
                     }
@@ -294,24 +276,19 @@ namespace NMG.Core.Reader
                 {
                     using (var tableCommand = conn.CreateCommand())
                     {
-                        tableCommand.CommandText = String.Format("SELECT p.table_name " +
-                                                                 "FROM iiref_constraints rc " +
-                                                                 "INNER JOIN iikeys p " +
-                                                                 "ON p.schema_name = rc.unique_schema_name " +
-                                                                 "AND p.constraint_name = rc.unique_constraint_name " +
-                                                                 "INNER JOIN iiconstraints c " +
-                                                                 "ON c.schema_name = rc.ref_schema_name " +
-                                                                 "AND c.constraint_name = rc.ref_constraint_name " +
-                                                                 "INNER JOIN iikeys f " +
-                                                                 "ON f.schema_name = rc.ref_schema_name " +
-                                                                 "AND f.constraint_name = rc.ref_constraint_name " +
-                                                                 "AND p.key_position = f.key_position " +
-                                                                 "WHERE f.schema_name = '{0}' " +
-                                                                 "AND f.table_name = '{1}' " +
-                                                                 "AND f.column_name = '{2}'",
-                                                                 owner,
-                                                                 tableName,
-                                                                 columnName);
+                        tableCommand.CommandText = "SELECT p.table_name " + "FROM iiref_constraints rc " +
+                                                   "INNER JOIN iikeys p " +
+                                                   "ON p.schema_name = rc.unique_schema_name " +
+                                                   "AND p.constraint_name = rc.unique_constraint_name " +
+                                                   "INNER JOIN iiconstraints c " +
+                                                   "ON c.schema_name = rc.ref_schema_name " +
+                                                   "AND c.constraint_name = rc.ref_constraint_name " +
+                                                   "INNER JOIN iikeys f " + "ON f.schema_name = rc.ref_schema_name " +
+                                                   "AND f.constraint_name = rc.ref_constraint_name " +
+                                                   "AND p.key_position = f.key_position " +
+                                                   $"WHERE f.schema_name = '{owner}' " +
+                                                   $"AND f.table_name = '{tableName}' " +
+                                                   $"AND f.column_name = '{columnName}'";
                         return tableCommand.ExecuteScalar().ToString();
                     }
                 }
@@ -332,12 +309,9 @@ namespace NMG.Core.Reader
                 using (conn)
                 {
                     var tableCommand = conn.CreateCommand();
-                    tableCommand.CommandText = String.Format("SELECT table_name " +
-                                                             "FROM iitables " +
-                                                             "WHERE table_owner = '{0}' " +
-                                                             "AND table_type in ('T', 'V') " +
-                                                             "AND table_name NOT LIKE 'ii%'",
-                                                             owner);
+                    tableCommand.CommandText = "SELECT table_name " + "FROM iitables " +
+                                               $"WHERE table_owner = '{owner}' " + "AND table_type in ('T', 'V') " +
+                                               "AND table_name NOT LIKE 'ii%'";
 
                     var sqlDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
                     while (sqlDataReader.Read())

@@ -157,7 +157,8 @@ namespace NMG.Core.Reader
                 using (conn)
                 {
                     var tableCommand = conn.CreateCommand();
-                    tableCommand.CommandText = String.Format("select table_name from information_schema.tables where table_type like 'BASE TABLE' and TABLE_SCHEMA = '{0}'", owner);
+                    tableCommand.CommandText =
+	                    $"select table_name from information_schema.tables where table_type like 'BASE TABLE' and TABLE_SCHEMA = '{owner}'";
                     var sqlDataReader = tableCommand.ExecuteReader(CommandBehavior.CloseConnection);
                     while (sqlDataReader.Read())
                     {
@@ -285,8 +286,7 @@ a.table_schema='" + owner+"' and a.table_name='"+tablename+"' and a.column_name=
             using (conn)
             {
                 NpgsqlCommand tableCommand = conn.CreateCommand();
-                tableCommand.CommandText = String.Format(
-                    @"
+                tableCommand.CommandText = $@"
                         select pk.table_name
                         from information_schema.referential_constraints c
                         inner join information_schema.table_constraints fk on c.constraint_name = fk.constraint_name
@@ -298,8 +298,7 @@ a.table_schema='" + owner+"' and a.table_name='"+tablename+"' and a.column_name=
                         inner join information_schema.key_column_usage i2 on i1.constraint_name = i2.constraint_name
                         where i1.constraint_type = 'PRIMARY KEY'
                         ) pt on pt.table_name = pk.table_name
-                        where fk.table_name = '{0}' and cu.column_name = '{1}'",
-                    selectedTableName, columnName);
+                        where fk.table_name = '{selectedTableName}' and cu.column_name = '{columnName}'";
                 object referencedTableName = tableCommand.ExecuteScalar();
 
                 return (string)referencedTableName;
@@ -320,8 +319,7 @@ a.table_schema='" + owner+"' and a.table_name='"+tablename+"' and a.column_name=
                 {
                     command.Connection = conn;
                     command.CommandText =
-                        String.Format(
-                            @"
+	                    $@"
                         select DISTINCT
 	                         b.TABLE_NAME,
 	                         c.TABLE_NAME
@@ -338,10 +336,9 @@ a.table_schema='" + owner+"' and a.table_name='"+tablename+"' and a.column_name=
 	                        a.CONSTRAINT_SCHEMA = c.CONSTRAINT_SCHEMA and
 	                        a.CONSTRAINT_NAME = c.CONSTRAINT_NAME
                         where
-	                        b.TABLE_NAME = '{0}'
+	                        b.TABLE_NAME = '{table.Name}'
                         order by
-	                        1,2",
-                            table.Name);
+	                        1,2";
                     NpgsqlDataReader reader = command.ExecuteReader();
 
                     while (reader.Read())

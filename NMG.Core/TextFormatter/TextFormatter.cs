@@ -77,14 +77,27 @@ namespace NMG.Core.TextFormatter
         }
 
         public IList<string> PrefixRemovalList { get; set; }
-    }   
+		public Dictionary<string, string> PreMap { get; set; }
+    }
 
-    public class UnformattedTextFormatter : AbstractTextFormatter { }
+	public class UnformattedTextFormatter : AbstractTextFormatter
+	{
+		public override string FormatText(string text)
+		{
+			string s;
+			if (PreMap != null && PreMap.TryGetValue(text.ToLower(), out s))
+				return s;
+			return text;
+		}
+	}
 
-    public class CamelCaseTextFormatter : AbstractTextFormatter
+	public class CamelCaseTextFormatter : AbstractTextFormatter
     {
         public override string FormatText(string text)
         {
+	        string s;
+	        if (PreMap != null && PreMap.TryGetValue(text.ToLower(), out s))
+		        return s;
             return base.FormatText(text).ToCamelCase();
         }
     }
@@ -93,6 +106,9 @@ namespace NMG.Core.TextFormatter
     {
         public override string FormatText(string text)
         {
+	        string s;
+	        if (PreMap != null && PreMap.TryGetValue(text.ToLower(), out s))
+		        return s;
             return base.FormatText(text).ToPascalCase();
         }
     }
@@ -108,7 +124,10 @@ namespace NMG.Core.TextFormatter
 
         public override string FormatText(string text)
         {
-            return Prefix + base.FormatText(text);
+			string s;
+			if (PreMap != null && PreMap.TryGetValue(text.ToLower(), out s))
+				return s;
+			return Prefix + base.FormatText(text);
         }
     }
 
@@ -135,7 +154,8 @@ namespace NMG.Core.TextFormatter
                     throw new Exception("Invalid or unsupported field naming convention.");
             }
 
-            formatter.PrefixRemovalList = applicationPreferences.FieldPrefixRemovalList;
+			((AbstractTextFormatter)formatter).PreMap = applicationPreferences.PreMap;
+			formatter.PrefixRemovalList = applicationPreferences.FieldPrefixRemovalList;
 
             return formatter;
         }

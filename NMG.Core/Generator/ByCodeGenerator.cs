@@ -21,7 +21,7 @@ namespace NMG.Core.Generator
         {
             var pascalCaseTextFormatter = new PascalCaseTextFormatter {PrefixRemovalList = appPrefs.FieldPrefixRemovalList};
 
-            var className = string.Format("{0}{1}{2}", appPrefs.ClassNamePrefix, pascalCaseTextFormatter.FormatSingular(Table.Name), "Map");
+            var className = $"{appPrefs.ClassNamePrefix}{pascalCaseTextFormatter.FormatSingular(Table.Name)}{"Map"}";
             var compileUnit = GetCompleteCompileUnit(className);
             var generateCode = GenerateCode(compileUnit, className);
             
@@ -49,17 +49,17 @@ namespace NMG.Core.Generator
             switch (appPrefs.Language)
             {
                 case Language.CSharp:
-                    newType.BaseTypes.Add(string.Format("ClassMapping<{0}{1}>", appPrefs.ClassNamePrefix, className));
+                    newType.BaseTypes.Add($"ClassMapping<{appPrefs.ClassNamePrefix}{className}>");
                     break;
                 case Language.VB:
-                    newType.BaseTypes.Add(string.Format("ClassMapping(Of {0}{1})", appPrefs.ClassNamePrefix, className));
+                    newType.BaseTypes.Add($"ClassMapping(Of {appPrefs.ClassNamePrefix}{className})");
                     break;
             }
 
             var constructor = new CodeConstructor {Attributes = MemberAttributes.Public};
 
             // Table Name - Only ouput if table is different than the class name.
-            if (Table.Name.ToLower() != className.ToLower())
+            if (true)//Table.Name.ToLower() != className.ToLower())
             {
                 constructor.Statements.Add(new CodeSnippetStatement(TABS + "Table(\"" + Table.Name + "\");"));
             }
@@ -69,7 +69,7 @@ namespace NMG.Core.Generator
                 constructor.Statements.Add(new CodeSnippetStatement(TABS + "Schema(\"" + Table.Owner + "\");"));
             }
 
-            constructor.Statements.Add(new CodeSnippetStatement(TABS + string.Format("Lazy({0});", appPrefs.UseLazy ? "true" : "false")));
+            constructor.Statements.Add(new CodeSnippetStatement(TABS + $"Lazy({(appPrefs.UseLazy ? "true" : "false")});"));
 
             var mapper = new DBColumnMapper(appPrefs);
 

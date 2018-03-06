@@ -33,6 +33,11 @@ namespace NMG.Core.ByCode
                     builder.AppendLine();
                     builder.AppendLine("\t\t\t\t{");
                     builder.AppendLine("\t\t\t\t\tmap.Column(\"" + column.Name + "\");");
+
+                    var l = GetLenght(column, true);
+                    if (!string.IsNullOrWhiteSpace(l))
+                        builder.AppendLine("\t\t\t\t\t" + l);
+
                     builder.AppendLine("\t\t\t\t\tmap.Generator(Generators.Sequence, g => g.Params(new { sequence = \"" + sequenceName + "\" }));");
                     builder.Append("\t\t\t\t});");
                     break;
@@ -53,14 +58,21 @@ namespace NMG.Core.ByCode
             var mapList = new List<string>();
             var propertyName = formatter.FormatText(column.Name);
 
-            if (column.Name.ToLower() != propertyName.ToLower())
+            if (column.Name.ToLower() != propertyName.ToLower() || _applicationPreferences.AlwaysGenerateColumnMapping)
             {
                 mapList.Add("map.Column(\"" + column.Name + "\")");
             }
             mapList.Add(column.IsIdentity ? "map.Generator(Generators.Identity)" : "map.Generator(Generators.Assigned)");
 
+            var l = GetLenght(column);
+            if (!string.IsNullOrWhiteSpace(l))
+                mapList.Add(l);
+
             // Outer property definition
-            return FormatCode("Id", propertyName, mapList);
+            string line = FormatCode("Id", propertyName, mapList);
+            line += $" // {column.Format} - {column.Description}";
+
+            return line;
         }
 
         public string CompositeIdMap(IList<Column> columns, ITextFormatter formatter)
@@ -75,7 +87,7 @@ namespace NMG.Core.ByCode
                     builder.AppendLine("\t\t\t\t{");
                     foreach (var column in columns)
                     {
-                        builder.AppendLine("\t\t\t\t\tcompId.Property(x => x." + formatter.FormatText(column.Name) + ", m => m.Column(\"" + column.Name + "\"));");
+                        builder.AppendLine($"\t\t\t\t\tcompId.Property(x => x.{formatter.FormatText(column.Name)}, map => {{ map.Column(\"{column.Name}\"); {GetLenght(column, true)} }}); " + $" // {column.Format} - {column.Description}");
                     }
                     builder.Append("\t\t\t\t});");
                     break;
@@ -91,7 +103,17 @@ namespace NMG.Core.ByCode
 
             return builder.ToString();
         }
-        
+
+
+	    private string GetLenght(Column c, bool addSemiColon = false)
+	    {
+		    if (_applicationPreferences.IncludeLengthTextOnly)
+		    {
+			    if (c.DataType.ToLower().Contains("varchar"))
+				    return $"map.Length({c.DataLength}){(addSemiColon ? ";" : "")}";
+		    }
+		    return "";
+	    }
             
 //Property(x => x.Name, map =>
 //                {
@@ -106,7 +128,7 @@ namespace NMG.Core.ByCode
             var mapList = new List<string>();
 
             // Column
-            if (column.Name.ToLower() != propertyName.ToLower())
+            if (column.Name.ToLower() != propertyName.ToLower() || _applicationPreferences.AlwaysGenerateColumnMapping)
             {
                 mapList.Add("map.Column(\"" + column.Name + "\")");
             }
@@ -120,33 +142,46 @@ namespace NMG.Core.ByCode
             {
                 mapList.Add("map.Unique(true)");
             }
-            // Length
-            if (column.DataLength.GetValueOrDefault() > 0 & includeLengthAndScale)
-            {
-                mapList.Add("map.Length(" + column.DataLength + ")");
-            }
-            else
-            {
-                // Precision
-                if (column.DataPrecision.GetValueOrDefault(0) > 0 & includeLengthAndScale)
-                {
-                    mapList.Add("map.Precision(" + column.DataPrecision + ")");
-                }
-                // Scale
-                if (column.DataScale.GetValueOrDefault(0) > 0 & includeLengthAndScale)
-                {
-                    mapList.Add("map.Scale(" + column.DataScale + ")");
-                }
-            }
 
-            // m.Access(Accessor.Field);
-            if (_applicationPreferences.FieldGenerationConvention == FieldGenerationConvention.Field)
+            // Length
+	        if (_applicationPreferences.IncludeLengthTextOnly)
+	        {
+		        string l = GetLenght(column);
+				if (!string.IsNullOrWhiteSpace(l))
+					mapList.Add(l);
+			}
+			else
+	        {
+		        if (column.DataLength.GetValueOrDefault() > 0 && includeLengthAndScale)
+		        {
+			        mapList.Add("map.Length(" + column.DataLength + ")");
+		        }
+		        else
+		        {
+			        // Precision
+			        if (column.DataPrecision.GetValueOrDefault(0) > 0 && includeLengthAndScale)
+			        {
+				        mapList.Add("map.Precision(" + column.DataPrecision + ")");
+			        }
+			        // Scale
+			        if (column.DataScale.GetValueOrDefault(0) > 0 && includeLengthAndScale)
+			        {
+				        mapList.Add("map.Scale(" + column.DataScale + ")");
+			        }
+		        }
+			}
+
+			// m.Access(Accessor.Field);
+			if (_applicationPreferences.FieldGenerationConvention == FieldGenerationConvention.Field)
             {
                 mapList.Add("map.Access(Accessor.Field)");
             }
 
             // Outer property definition
-            return FormatCode("Property", propertyName, mapList);
+            string line = FormatCode("Property", propertyName, mapList);
+            line += $" // {column.Format} - {column.Description}";
+
+            return line;
         }
 
         private string FormatCode(string byCodeProperty, string propertyName, List<string> mapList)
@@ -160,16 +195,17 @@ namespace NMG.Core.ByCode
                     switch (mapList.Count)
                     {
                         case 0:
-                            outerStrBuilder.AppendFormat("{0}(x => x.{1});", byCodeProperty, propertyName);
+                            outerStrBuilder.AppendFormat($"{byCodeProperty}(x => x.{propertyName});");
                             break;
                         case 1:
-                            outerStrBuilder.AppendFormat("{0}(x => x.{1}, map => {2});", byCodeProperty, propertyName, mapList.First());
+                            outerStrBuilder.AppendFormat($"{byCodeProperty}(x => x.{propertyName}, map => {mapList.First()});");
                             break;
                         case 2:
-                            outerStrBuilder.AppendFormat("{0}(x => x.{1}, map => {{ {2}; }});", byCodeProperty, propertyName, mapList.Aggregate((c, s) => string.Format("{0}; {1}", c, s)));
+                            outerStrBuilder.AppendFormat("{0}(x => x.{1}, map => {{ {2}; }});", byCodeProperty, propertyName, mapList.Aggregate((c, s) => $"{c}; {s}"));
                             break;
                         default:
-                            outerStrBuilder.AppendFormat("{0}(x => x.{1}, map => \r\n\t\t\t{{\r\n\t\t\t\t{2};\r\n\t\t\t}});", byCodeProperty,propertyName, mapList.Aggregate((c, s) => string.Format("{0};\r\n\t\t\t\t{1}", c, s)));
+                            outerStrBuilder.AppendFormat("{0}(x => x.{1}, map => \r\n\t\t\t{{\r\n\t\t\t\t{2};\r\n\t\t\t}});", byCodeProperty,propertyName, mapList.Aggregate((c, s) =>
+	                            $"{c};\r\n\t\t\t\t{s}"));
                             break;
                     }
                     break;
@@ -185,7 +221,8 @@ namespace NMG.Core.ByCode
                             outerStrBuilder.AppendFormat("{0}(Function(x) x.{1}, Sub(map) {2})", byCodeProperty, propertyName, mapList.First());
                             break;
                         default:
-                            outerStrBuilder.AppendFormat("{0}(Function(x) x.{1}, Sub(map)\r\n\t\t\t\t\t\t{2}\r\n\t\t\t\t\tEnd Sub)", byCodeProperty, propertyName, mapList.Aggregate((c, s) => string.Format("{0}\r\n\t\t\t\t\t\t{1}", c, s)));
+                            outerStrBuilder.AppendFormat("{0}(Function(x) x.{1}, Sub(map)\r\n\t\t\t\t\t\t{2}\r\n\t\t\t\t\tEnd Sub)", byCodeProperty, propertyName, mapList.Aggregate((c, s) =>
+	                            $"{c}\r\n\t\t\t\t\t\t{s}"));
                             break;
                     }
                     break;

@@ -22,7 +22,7 @@ namespace NMG.Core.Generator
         public override void Generate(bool writeToFile = true)
         {
             var pascalCaseTextFormatter = new PascalCaseTextFormatter {PrefixRemovalList = appPrefs.FieldPrefixRemovalList};
-            var className = string.Format("{0}{1}{2}", appPrefs.ClassNamePrefix, pascalCaseTextFormatter.FormatSingular(Table.Name), "Map");
+            var className = $"{appPrefs.ClassNamePrefix}{pascalCaseTextFormatter.FormatSingular(Table.Name)}{"Map"}";
             var compileUnit = GetCompleteCompileUnit(className);
             var generateCode = GenerateCode(compileUnit, className);
 
@@ -50,7 +50,8 @@ namespace NMG.Core.Generator
 
             newType.IsPartial = appPrefs.GeneratePartialClasses;
             var pascalCaseTextFormatter = new PascalCaseTextFormatter {PrefixRemovalList = appPrefs.FieldPrefixRemovalList};
-            newType.BaseTypes.Add(string.Format("EntityTypeConfiguration<{0}{1}>", appPrefs.ClassNamePrefix, pascalCaseTextFormatter.FormatSingular(Table.Name)));
+            newType.BaseTypes.Add(
+	            $"EntityTypeConfiguration<{appPrefs.ClassNamePrefix}{pascalCaseTextFormatter.FormatSingular(Table.Name)}>");
 
             var constructor = new CodeConstructor {Attributes = MemberAttributes.Public};
             constructor.Statements.Add(new CodeSnippetStatement(TABS + "ToTable(\"" + Table.Name + "\");"));
@@ -60,7 +61,9 @@ namespace NMG.Core.Generator
             if (UsesSequence)
             {
                 var fieldName = FixPropertyWithSameClassName(Table.PrimaryKey.Columns[0].Name, Table.Name);
-                constructor.Statements.Add(new CodeSnippetStatement(String.Format(TABS + "Id(x => x.{0}).Column(x => x.{1}).GeneratedBy.Sequence(\"{2}\")", Formatter.FormatText(fieldName), fieldName, appPrefs.Sequence)));
+                constructor.Statements.Add(new CodeSnippetStatement(
+	                TABS +
+	                $"Id(x => x.{Formatter.FormatText(fieldName)}).Column(x => x.{fieldName}).GeneratedBy.Sequence(\"{appPrefs.Sequence}\")"));
             }
             else if (Table.PrimaryKey != null && Table.PrimaryKey.Type == PrimaryKeyType.PrimaryKey)
             {
@@ -114,7 +117,8 @@ namespace NMG.Core.Generator
         protected override string AddStandardHeader(string entireContent)
         {
             entireContent = "using " + appPrefs.NameSpace + "; " + entireContent;
-            entireContent = string.Format("using System.ComponentModel.DataAnnotations.Schema;{{0}}using System.Data.Entity.ModelConfiguration;{{0}}{0}", Environment.NewLine) + entireContent;
+            entireContent =
+	            $"using System.ComponentModel.DataAnnotations.Schema;{{0}}using System.Data.Entity.ModelConfiguration;{{0}}{Environment.NewLine}" + entireContent;
             return base.AddStandardHeader(entireContent);
         }
 
@@ -127,7 +131,8 @@ namespace NMG.Core.Generator
             var fieldName = FixPropertyWithSameClassName(propertyName, table.Name);
             var pkAlsoFkQty = (from fk in table.ForeignKeys.Where(fk => fk.UniquePropertyName == pkColumnName) select fk).Count();
             if (pkAlsoFkQty > 0) fieldName = fieldName + "Id";
-            return new CodeSnippetStatement(string.Format(TABS + "Id(x => x.{0}).{1}.Column(\"{2}\");", formatter.FormatText(fieldName), idGeneratorType, pkColumnName));
+            return new CodeSnippetStatement(
+	            TABS + $"Id(x => x.{formatter.FormatText(fieldName)}).{idGeneratorType}.Column(\"{pkColumnName}\");");
         }
 
         private static CodeSnippetStatement GetIdMapCodeSnippetStatement(PrimaryKey primaryKey, Table table, ITextFormatter formatter)
@@ -140,12 +145,12 @@ namespace NMG.Core.Generator
                 var fieldName = FixPropertyWithSameClassName(propertyName, table.Name);
                 var pkAlsoFkQty = (from fk in table.ForeignKeys.Where(fk => fk.UniquePropertyName == pkColumn.Name) select fk).Count();
                 if (pkAlsoFkQty > 0) fieldName = fieldName + "Id";
-                var tmp = String.Format(".KeyProperty(x => x.{0}, \"{1}\")", fieldName, pkColumn.Name);
+                var tmp = $".KeyProperty(x => x.{fieldName}, \"{pkColumn.Name}\")";
                 keyPropertyBuilder.Append(first ? tmp : "\n" + TABS + "             " + tmp);
                 first = false;
             }
 
-            return new CodeSnippetStatement(TABS + string.Format("CompositeId(){0};", keyPropertyBuilder));
+            return new CodeSnippetStatement(TABS + $"CompositeId(){keyPropertyBuilder};");
         }
     }
 
@@ -163,8 +168,10 @@ namespace NMG.Core.Generator
 
         public CodeSnippetStatement Create(HasMany hasMany)
         {
-            var hasManySnippet = string.Format("HasMany(x => x.{0}).WithMany(x => x.{1})", Formatter.FormatPlural(hasMany.Reference), pascalCaseTextFormatter.FormatSingular(hasMany.PKTableName));
-            var keySnippet = string.Format(".Map(m => {{m.ToTable(\"{0}\"); m.MapLeftKey(\"{1}\"); m.MapRightKey(\"{2}\");}})", hasMany.Reference, hasMany.ReferenceColumn, hasMany.ReferenceColumn);
+            var hasManySnippet =
+	            $"HasMany(x => x.{Formatter.FormatPlural(hasMany.Reference)}).WithMany(x => x.{pascalCaseTextFormatter.FormatSingular(hasMany.PKTableName)})";
+            var keySnippet =
+	            $".Map(m => {{m.ToTable(\"{hasMany.Reference}\"); m.MapLeftKey(\"{hasMany.ReferenceColumn}\"); m.MapRightKey(\"{hasMany.ReferenceColumn}\");}})";
             return new CodeSnippetStatement(string.Format(AbstractGenerator.TABS + "{0}{1};", hasManySnippet, keySnippet));
         }
     }

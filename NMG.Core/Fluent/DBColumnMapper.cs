@@ -8,7 +8,7 @@ namespace NMG.Core.Fluent
     {
         public string Map(Column column, string fieldName, ITextFormatter Formatter, bool includeLengthAndScale = true)
         {
-            var mappedStrBuilder = new StringBuilder(string.Format("Map(x => x.{0})", fieldName));
+            var mappedStrBuilder = new StringBuilder($"Map(x => x.{fieldName})");
             mappedStrBuilder.Append(Constants.Dot);
             mappedStrBuilder.Append("Column(\"" + column.Name + "\")");
 

@@ -253,8 +253,7 @@ namespace NMG.Core.Reader
                 using (conn)
                 {
                     OleDbCommand tableCommand = conn.CreateCommand();
-                    tableCommand.CommandText = String.Format(
-                        @"
+                    tableCommand.CommandText = $@"
 						SELECT pt.table_name PK_TABLE
 	                         , t.Table_name FK_TABLE
 	                         , fc.column_name FK_COLUMN_NAME
@@ -267,8 +266,7 @@ namespace NMG.Core.Reader
 	                        INNER JOIN syscolumn fc	ON fc.column_id = fcol.foreign_column_id AND fc.Table_id = fcol.foreign_table_id
 	                        INNER JOIN systable pt ON pt.table_id = fk.primary_table_id
                             INNER JOIN syscolumn pc on pc.column_id = fcol.primary_column_id and pc.Table_id = fk.primary_table_id
-                        WHERE t.Table_name = '{0}' AND fc.column_name = '{1}'",
-                        selectedTableName, columnName);
+                        WHERE t.Table_name = '{selectedTableName}' AND fc.column_name = '{columnName}'";
                     referencedTableName = tableCommand.ExecuteScalar();
                 }
             }
@@ -293,8 +291,7 @@ namespace NMG.Core.Reader
                     {
                         command.Connection = conn;
                         command.CommandText =
-                            String.Format(
-                                @"
+	                        $@"
 						SELECT pt.table_name PK_TABLE
 	                         , t.Table_name FK_TABLE
 	                         , fc.column_name FK_COLUMN_NAME
@@ -305,9 +302,8 @@ namespace NMG.Core.Reader
 	                        INNER JOIN sysfkcol fcol ON fcol.foreign_table_id = fk.foreign_table_id AND fcol.foreign_key_id = fk.foreign_key_id
 	                        INNER JOIN syscolumn fc	ON fc.column_id = fcol.foreign_column_id AND fc.Table_id = fcol.foreign_table_id
 	                        INNER JOIN systable pt ON pt.table_id = fk.primary_table_id
-                        WHERE pt.table_name = '{0}'
-                        ORDER BY 1, 2",
-                                table.Name);
+                        WHERE pt.table_name = '{table.Name}'
+                        ORDER BY 1, 2";
                         var reader = command.ExecuteReader();
 
                         while (reader.Read())
