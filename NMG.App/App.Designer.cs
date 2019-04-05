@@ -534,7 +534,6 @@ namespace NHibernateMappingGenerator
             this.mapCodeFastColoredTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.mapCodeFastColoredTextBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.mapCodeFastColoredTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mapCodeFastColoredTextBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.mapCodeFastColoredTextBox.IsReplaceMode = false;
             this.mapCodeFastColoredTextBox.Location = new System.Drawing.Point(3, 3);
             this.mapCodeFastColoredTextBox.Name = "mapCodeFastColoredTextBox";
@@ -569,14 +568,13 @@ namespace NHibernateMappingGenerator
         '\"',
         '\'',
         '\''};
-            this.domainCodeFastColoredTextBox.AutoScrollMinSize = new System.Drawing.Size(27, 14);
+            this.domainCodeFastColoredTextBox.AutoScrollMinSize = new System.Drawing.Size(2, 14);
             this.domainCodeFastColoredTextBox.BackBrush = null;
             this.domainCodeFastColoredTextBox.CharHeight = 14;
             this.domainCodeFastColoredTextBox.CharWidth = 8;
             this.domainCodeFastColoredTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.domainCodeFastColoredTextBox.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.domainCodeFastColoredTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.domainCodeFastColoredTextBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.domainCodeFastColoredTextBox.IsReplaceMode = false;
             this.domainCodeFastColoredTextBox.Location = new System.Drawing.Point(3, 3);
             this.domainCodeFastColoredTextBox.Name = "domainCodeFastColoredTextBox";
@@ -618,6 +616,7 @@ namespace NHibernateMappingGenerator
             this.txtPreMap.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.txtPreMap.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.txtPreMap.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtPreMap.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.txtPreMap.IsReplaceMode = false;
             this.txtPreMap.Location = new System.Drawing.Point(3, 3);
             this.txtPreMap.Name = "txtPreMap";
@@ -918,11 +917,13 @@ namespace NHibernateMappingGenerator
             // comboBoxForeignCollection
             // 
             this.comboBoxForeignCollection.AllowDrop = true;
+            this.comboBoxForeignCollection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxForeignCollection.FormattingEnabled = true;
             this.comboBoxForeignCollection.Items.AddRange(new object[] {
             "IList",
             "ICollection",
-            "Iesi.Collections.Generic.ISet"});
+            "Iesi.Collections.Generic.ISet",
+            "IEnumerable"});
             this.comboBoxForeignCollection.Location = new System.Drawing.Point(15, 126);
             this.comboBoxForeignCollection.Name = "comboBoxForeignCollection";
             this.comboBoxForeignCollection.Size = new System.Drawing.Size(193, 21);

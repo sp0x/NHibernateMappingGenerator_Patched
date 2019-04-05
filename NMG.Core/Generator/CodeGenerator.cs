@@ -79,7 +79,7 @@ namespace NMG.Core.Generator
                 getHashKeyCode.EndDirectives.Add(new CodeRegionDirective(CodeRegionMode.End, string.Empty));
             }
 
-            // Dont create a constructor if there are no relationships.
+            // Don't create a constructor if there are no relationships.
             if (Table.HasManyRelationships.Count == 0)
                 return compileUnit;
 

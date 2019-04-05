@@ -232,6 +232,8 @@ namespace NHibernateMappingGenerator
                 prefixLabel.Visible = prefixTextBox.Visible = false;
             }
 
+            linq2dbRadionBtn.Checked = true;
+            comboBoxForeignCollection.SelectedIndex = comboBoxForeignCollection.FindString("IEnumerable");
         }
 
         private void ToggleColumnsBasedOnAppSettings(ApplicationSettings appSettings)
