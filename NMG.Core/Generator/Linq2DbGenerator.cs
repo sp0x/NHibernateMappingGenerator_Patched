@@ -60,25 +60,25 @@ namespace NMG.Core.Generator
                 constructor.Statements.Add(new CodeSnippetStatement(TABS + ".HasTableName(\"" + Table.Name + "\");"));
 
 
-            if (UsesSequence)
-            {
-                string fieldName = FixPropertyWithSameClassName(Table.PrimaryKey.Columns[0].Name, Table.Name);
-                constructor.Statements.Add(new CodeSnippetStatement(
-                    TABS +
-                    $"Id(x => x.{Formatter.FormatText(fieldName)}).Column(x => x.{fieldName}).GeneratedBy.Sequence(\"{_appPrefs.Sequence}\")"));
-            }
-            else if (Table.PrimaryKey != null && Table.PrimaryKey.Type == PrimaryKeyType.PrimaryKey)
-            {
-                string fieldName = FixPropertyWithSameClassName(Table.PrimaryKey.Columns[0].Name, Table.Name);
-                constructor.Statements.Add(GetIdMapCodeSnippetStatement(_appPrefs, Table, Table.PrimaryKey.Columns[0].Name, fieldName, Table.PrimaryKey.Columns[0].DataType, Formatter));
-            }
-            else if (Table.PrimaryKey != null)
-            {
-                constructor.Statements.Add(GetIdMapCodeSnippetStatement(Table.PrimaryKey, Table, Formatter));
-            }
+            //if (UsesSequence)
+            //{
+            //    string fieldName = FixPropertyWithSameClassName(Table.PrimaryKey.Columns[0].Name, Table.Name);
+            //    constructor.Statements.Add(new CodeSnippetStatement(
+            //        TABS +
+            //        $"Id(x => x.{Formatter.FormatText(fieldName)}).Column(x => x.{fieldName}).GeneratedBy.Sequence(\"{_appPrefs.Sequence}\")"));
+            //}
+            //else if (Table.PrimaryKey != null && Table.PrimaryKey.Type == PrimaryKeyType.PrimaryKey)
+            //{
+            //    string fieldName = FixPropertyWithSameClassName(Table.PrimaryKey.Columns[0].Name, Table.Name);
+            //    constructor.Statements.Add(GetIdMapCodeSnippetStatement(_appPrefs, Table, Table.PrimaryKey.Columns[0].Name, fieldName, Table.PrimaryKey.Columns[0].DataType, Formatter));
+            //}
+            //else if (Table.PrimaryKey != null)
+            //{
+            //    constructor.Statements.Add(GetIdMapCodeSnippetStatement(Table.PrimaryKey, Table, Formatter));
+            //}
 
             // Property Map
-            foreach (Column column in Table.Columns.Where(x => !x.IsPrimaryKey && (!x.IsForeignKey || !_appPrefs.IncludeForeignKeys)))
+            foreach (Column column in Table.Columns.Where(x => !x.IsForeignKey))
             {
                 string propertyName = Formatter.FormatText(column.Name);
                 string fieldName = FixPropertyWithSameClassName(propertyName, Table.Name);
