@@ -126,6 +126,11 @@ namespace NHibernateMappingGenerator
             get { return entityFrameworkRadionBtn.Checked; }
         }
 
+        public bool IsLinq2db
+        {
+            get { return linq2dbRadionBtn.Checked; }
+        }
+
         public bool IsCastle
         {
             get { return castleMappingOption.Checked; }
@@ -731,6 +736,7 @@ namespace NHibernateMappingGenerator
                                                  Prefix = prefixTextBox.Text,
                                                  IsFluent = IsFluent,
                                                  IsEntityFramework = IsEntityFramework,
+                                                 IsLinq2db = IsLinq2db,
                                                  IsCastle = IsCastle,
                                                  GeneratePartialClasses = appSettings.GeneratePartialClasses,
                                                  GenerateWcfDataContract = appSettings.GenerateWcfContracts,

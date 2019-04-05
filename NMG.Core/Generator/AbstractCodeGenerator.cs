@@ -27,7 +27,7 @@ namespace NMG.Core.Generator
             using (provider)
             {
                 var stringWriter = new StringWriter(stringBuilder);
-                provider.GenerateCodeFromCompileUnit(compileUnit, stringWriter, new CodeGeneratorOptions());
+                provider.GenerateCodeFromCompileUnit(compileUnit, stringWriter, new CodeGeneratorOptions(){ BracingStyle = "C", });
             }
             var codeOutput = CleanupCode(stringBuilder.ToString());
             GeneratedCode = codeOutput;

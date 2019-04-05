@@ -425,7 +425,7 @@ namespace NMG.Core.Generator
                 {
                     using (streamWriter)
                     {
-                        var options = new CodeGeneratorOptions { BlankLinesBetweenMembers = false };
+                        var options = new CodeGeneratorOptions { BlankLinesBetweenMembers = false, };
                         provider.GenerateCodeFromCompileUnit(compileUnit, textWriter, options);
                     }
                 }

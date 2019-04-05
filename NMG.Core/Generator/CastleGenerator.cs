@@ -90,7 +90,7 @@ namespace NMG.Core.Generator
                 {
                     using (streamWriter)
                     {
-                        var options = new CodeGeneratorOptions {BlankLinesBetweenMembers = true};
+                        var options = new CodeGeneratorOptions {BlankLinesBetweenMembers = true };
                         provider.GenerateCodeFromCompileUnit(compileUnit, textWriter, options);
                     }
                 }

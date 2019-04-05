@@ -32,8 +32,7 @@ namespace NMG.Tests.Generator
             CodeMemberProperty autoProperty = codeGenerationHelper.CreateAutoProperty(typeof (string), "Name", false);
             CodeCompileUnit codeCompileUnit = codeGenerationHelper.GetCodeCompileUnit("someNamespace", "someType");
             codeCompileUnit.Namespaces[0].Types[0].Members.Add(autoProperty);
-            cSharpCodeProvider.GenerateCodeFromCompileUnit(codeCompileUnit, new StringWriter(stringBuilder),
-                                                           new CodeGeneratorOptions());
+            cSharpCodeProvider.GenerateCodeFromCompileUnit(codeCompileUnit, new StringWriter(stringBuilder), new CodeGeneratorOptions());
             var builderCompare = new StringBuilder();
             builderCompare.AppendLine("public virtual string Name {");
             builderCompare.AppendLine("            get {");

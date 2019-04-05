@@ -36,6 +36,8 @@ namespace NMG.Core
 
         public bool IsEntityFramework { get; set; }
 
+        public bool IsLinq2db { get; set; }
+
         public bool IsNhFluent { get; set; }
 
         public bool IsCastle { get; set; }

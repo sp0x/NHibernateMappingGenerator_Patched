@@ -14,6 +14,7 @@ namespace NHibernateMappingGenerator
         private readonly ContractGenerator contractGenerator;
         private readonly ByCodeGenerator byCodeGenerator;
         private EntityFrameworkGenerator entityFrameworkGenerator;
+        private Linq2DbGenerator linq2dbkGenerator;
 
         public ApplicationController(ApplicationPreferences applicationPreferences, Table table)
         {
@@ -21,6 +22,7 @@ namespace NHibernateMappingGenerator
             codeGenerator = new CodeGenerator(applicationPreferences, table);
             fluentGenerator = new FluentGenerator(applicationPreferences, table);
             entityFrameworkGenerator = new EntityFrameworkGenerator(applicationPreferences, table);
+            linq2dbkGenerator = new Linq2DbGenerator(applicationPreferences, table);
             castleGenerator = new CastleGenerator(applicationPreferences, table);
             contractGenerator = new ContractGenerator(applicationPreferences, table);
             byCodeGenerator = new ByCodeGenerator(applicationPreferences, table);
@@ -50,6 +52,11 @@ namespace NHibernateMappingGenerator
             {
                 entityFrameworkGenerator.Generate(writeToFile);
                 GeneratedMapCode = entityFrameworkGenerator.GeneratedCode;
+            }
+            else if (applicationPreferences.IsLinq2db)
+            {
+                linq2dbkGenerator.Generate(writeToFile);
+                GeneratedMapCode = linq2dbkGenerator.GeneratedCode;
             }
             else if (applicationPreferences.IsCastle)
             {
