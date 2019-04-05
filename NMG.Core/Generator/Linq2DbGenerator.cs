@@ -56,9 +56,8 @@ namespace NMG.Core.Generator
                 constructor.Statements.Add(new CodeSnippetStatement(TABS + ".HasSchemaName(\"" + Table.Owner + "\")"));
 
             // Table Name - Only ouput if table is different than the class name.
-            if (true)//Table.Name.ToLower() != className.ToLower())
-                constructor.Statements.Add(new CodeSnippetStatement(TABS + ".HasTableName(\"" + Table.Name + "\");"));
-
+            bool tableNameOk = Table.Name.ToLower() == className.ToLower();
+            constructor.Statements.Add(new CodeSnippetStatement($"{TABS}{(tableNameOk?"//":"")}.HasTableName(\"{Table.Name}\")"));
 
             //if (UsesSequence)
             //{
