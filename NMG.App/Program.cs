@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using NHibernateMappingGenerator.View;
 
 namespace NHibernateMappingGenerator
 {
@@ -10,7 +11,7 @@ namespace NHibernateMappingGenerator
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new App());
+            Application.Run(new MainForm());
         }
     }
 }

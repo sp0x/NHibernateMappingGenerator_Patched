@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
+using NMG.Core.DbReader;
 using NUnit.Framework;
-using NMG.Core.Reader;
 
 namespace NMG.Tests.Reader
 {

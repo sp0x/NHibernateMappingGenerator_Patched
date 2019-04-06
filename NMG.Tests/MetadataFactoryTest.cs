@@ -1,6 +1,6 @@
 using NMG.Core;
+using NMG.Core.DbReader;
 using NMG.Core.Domain;
-using NMG.Core.Reader;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
 

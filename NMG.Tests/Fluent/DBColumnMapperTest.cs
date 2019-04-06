@@ -1,5 +1,5 @@
 using NMG.Core.Domain;
-using NMG.Core.Fluent;
+using NMG.Core.Generators.CodeGenerators;
 using NMG.Core.TextFormatter;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
@@ -12,7 +12,7 @@ namespace NMG.Tests.Fluent
         [Test]
         public void ShouldMapDBColumn()
         {
-            var mapper = new DBColumnMapper();
+            var mapper = new FluentColumnMapper();
             var column = new Column
                              {
                                  Name = "Age",
@@ -25,7 +25,7 @@ namespace NMG.Tests.Fluent
         [Test]
         public void ShouldMapDBColumnWithProperties()
         {
-            var mapper = new DBColumnMapper();
+            var mapper = new FluentColumnMapper();
             var column = new Column
                              {
                                  Name = "Name",

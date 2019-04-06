@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using NMG.Core.Annotations;
+using NMG.Core.Properties;
 
 namespace NMG.Core.Domain
 {

@@ -3,7 +3,7 @@ using System.CodeDom.Compiler;
 using System.IO;
 using System.Text;
 using Microsoft.CSharp;
-using NMG.Core.Generator;
+using NMG.Core.Generators;
 using NUnit.Framework;
 
 namespace NMG.Tests.Generator

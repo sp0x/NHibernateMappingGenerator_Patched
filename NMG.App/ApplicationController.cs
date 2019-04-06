@@ -1,6 +1,8 @@
 using NMG.Core;
 using NMG.Core.Domain;
-using NMG.Core.Generator;
+using NMG.Core.Generators;
+using NMG.Core.Generators.CodeGenerators;
+using NMG.Core.Generators.MappingGenerators;
 
 namespace NHibernateMappingGenerator
 {

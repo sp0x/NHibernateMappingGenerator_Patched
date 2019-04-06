@@ -1,5 +1,5 @@
-﻿using NMG.Core.Domain;
-using NMG.Core.Reader;
+﻿using NMG.Core.DbReader;
+using NMG.Core.Domain;
 
 namespace NMG.Core
 {

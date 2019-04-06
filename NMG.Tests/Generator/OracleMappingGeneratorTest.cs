@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using NMG.Core;
 using NMG.Core.Domain;
-using NMG.Core.Generator;
+using NMG.Core.Generators.MappingGenerators;
 using NUnit.Framework;
 
 namespace NMG.Tests.Generator
