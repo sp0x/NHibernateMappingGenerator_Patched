@@ -8,8 +8,8 @@
     <ProjectGuid>{63E6330D-8291-44DD-A032-B7FBF844AC5D}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NHibernateMappingGenerator</RootNamespace>
-    <AssemblyName>NHibernateMappingGenerator</AssemblyName>
+    <RootNamespace>ORMappingGenerator</RootNamespace>
+    <AssemblyName>ORMappingGenerator</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <ApplicationIcon>Applications.ico</ApplicationIcon>
     <FileUpgradeFlags>

@@ -50,13 +50,11 @@ namespace NMG.Core.Generators.CodeGenerators
             var constructor = new CodeConstructor { Attributes = MemberAttributes.Public, Parameters = { new CodeParameterDeclarationExpression("FluentMappingBuilder","mapper") }};
             constructor.Statements.Add(new CodeSnippetStatement(TABS + $"mapper.Entity<{_appPrefs.ClassNamePrefix}{className}>()"));
 
-            // Scheme / Owner Name
-            if (!string.IsNullOrEmpty(Table.Owner))
-                constructor.Statements.Add(new CodeSnippetStatement(TABS + ".HasSchemaName(\"" + Table.Owner + "\")"));
 
-            // Table Name - Only ouput if table is different than the class name.
-            bool tableNameOk = Table.Name.ToLower() == className.ToLower();
-            constructor.Statements.Add(new CodeSnippetStatement($"{TABS}{(tableNameOk?"//":"")}.HasTableName(\"{Table.Name}\")"));
+            string table = Table.Name.ToLower().Equals(className.ToLower()) ? "" : $"\"{Table.Name}\"";
+            string schemaName = string.IsNullOrEmpty(Table.Owner) ? "" : $"Schema = \"{Table.Owner}\",";
+            string tableAttribute = $".HasAttribute(new TableAttribute({table}) " + "{" + $"{schemaName} IsColumnAttributeRequired = true" +"})";
+            constructor.Statements.Add(new CodeSnippetStatement($"{TABS}{tableAttribute}"));
 
             //if (UsesSequence)
             //{
@@ -73,6 +71,15 @@ namespace NMG.Core.Generators.CodeGenerators
             //else if (Table.PrimaryKey != null)
             //{
             //    constructor.Statements.Add(GetIdMapCodeSnippetStatement(Table.PrimaryKey, Table, Formatter));
+            //}
+
+            //int nKeyOrder = 0;
+            //foreach (Column column in Table.PrimaryKey.Columns)
+            //{
+            //    string propertyName = Formatter.FormatText(column.Name);
+            //    string fieldName = FixPropertyWithSameClassName(propertyName, Table.Name);
+            //    string columnMapping = new Linq2DbColumnMapper().Map(column, fieldName, Formatter, _appPrefs.IncludeLengthAndScale, ++nKeyOrder);
+            //    constructor.Statements.Add(new CodeSnippetStatement(TABS + columnMapping));
             //}
 
             // Property Map
@@ -96,20 +103,7 @@ namespace NMG.Core.Generators.CodeGenerators
             var builder = new StringBuilder();
             builder.AppendLine("#pragma warning disable 1591");
             builder.AppendLine();
-            builder.AppendLine("using System;");
-            builder.AppendLine("using System.Collections.Generic;");
-            builder.AppendLine("using System.Text;");
-            builder.AppendLine("using System.Linq;");
-            builder.AppendLine("using System.Expressions;");
-            builder.AppendLine("using System.Reflection;");
-            builder.AppendLine("using LinqToDB;");
-            builder.AppendLine("using LinqToDB.Common;");
-            builder.AppendLine("using LinqToDB.Data;");
-            builder.AppendLine("using LinqToDB.DataProvider.SqlServer;");
-            builder.AppendLine("using LinqToDB.Extensions;");
             builder.AppendLine("using LinqToDB.Mapping;");
-            builder.AppendLine();
-
             builder.Append(entireContent);
             return builder.ToString();
         }

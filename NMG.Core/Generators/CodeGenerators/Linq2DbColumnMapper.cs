@@ -6,34 +6,34 @@ namespace NMG.Core.Generators.CodeGenerators
 {
     public class Linq2DbColumnMapper
     {
-        public string Map(Column column, string fieldName, ITextFormatter formatter, bool includeLengthAndScale = true)
+        public string Map(Column column, string fieldName, ITextFormatter formatter, bool includeLengthAndScale = true, int keyOrder = 0)
         {
-            var sb = new StringBuilder($".Property(x => x.{fieldName})");
+            var sb = new StringBuilder($".HasAttribute(x => x.{fieldName}, new ColumnAttribute(");
 
-            if (column.Name != fieldName)
-                sb.Append(".HasColumnName(\"" + column.Name + "\")");
-            if (column.IsIdentity)
-                sb.Append(".IsIdentity()");
-            if (column.IsPrimaryKey)
-                sb.Append(".IsPrimaryKey()");
+            if (column.Name != fieldName) sb.Append($"\"{column.Name}\"");
+            sb.Append(") {");
 
-            sb.Append(!column.IsNullable ? ".IsNullable(false)" : ".IsNullable()");
+            if (column.IsIdentity)    sb.Append("IsIdentity=true,");
+            if (column.IsPrimaryKey)  sb.Append("IsPrimaryKey=true,");
+            if (column.IsNullable)    sb.Append("CanBeNull = true,");
 
             if (includeLengthAndScale)
             {
                 if (column.DataLength.GetValueOrDefault() > 0)
                 {
-                    sb.Append(".HasLength(" + column.DataLength + ")");
+                    sb.Append("Length=" + column.DataLength + ",");
                 }
                 else
                 {
                     if (column.DataPrecision.GetValueOrDefault(0) > 0)
-                        sb.Append(".HasPrecision(" + column.DataPrecision + ")");
+                        sb.Append("Precision=" + column.DataPrecision + ",");
 
                     if (column.DataScale.GetValueOrDefault(0) > 0)
-                        sb.Append(".HasScale(" + column.DataScale + ")");
+                        sb.Append("Scale=" + column.DataScale + ",");
                 }
             }
+
+            sb.Append("})"); // //DataType=, DbType=, Order=, PrimaryKeyOrder=,  MemberName=");
 
             return sb.ToString();
         }
