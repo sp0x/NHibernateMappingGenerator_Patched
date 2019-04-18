@@ -1,2 +1,3 @@
-# NHibernateMappingGenerator_Patched
-A fork of NHibernateMappingGenerator with some of it's annoying bugs fixed.
+# ORM Mapping Generator
+Forked from NHibernateMappingGenerator_Patched
+Added capability to create fluent mapping for linq2db.
