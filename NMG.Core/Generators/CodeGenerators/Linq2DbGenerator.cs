@@ -50,11 +50,24 @@ namespace NMG.Core.Generators.CodeGenerators
             var constructor = new CodeConstructor { Attributes = MemberAttributes.Public, Parameters = { new CodeParameterDeclarationExpression("FluentMappingBuilder","mapper") }};
             constructor.Statements.Add(new CodeSnippetStatement(TABS + $"mapper.Entity<{_appPrefs.ClassNamePrefix}{className}>()"));
 
+            string columRequiered = ".IsColumnRequired()";
+            constructor.Statements.Add(new CodeSnippetStatement($"{TABS}{columRequiered}"));
 
-            string table = Table.Name.ToLower().Equals(className.ToLower()) ? "" : $"\"{Table.Name}\"";
-            string schemaName = string.IsNullOrEmpty(Table.Owner) ? "" : $"Schema = \"{Table.Owner}\",";
-            string tableAttribute = $".HasAttribute(new TableAttribute({table}) " + "{" + $"{schemaName} IsColumnAttributeRequired = true" +"})";
-            constructor.Statements.Add(new CodeSnippetStatement($"{TABS}{tableAttribute}"));
+            if (!Table.Name.ToLower().Equals(className.ToLower()))
+            {
+                // .HasTableName("AbcRating")
+                string tableAttribute = $".HasTableName(\"{Table.Name}\")";
+                constructor.Statements.Add(new CodeSnippetStatement($"{TABS}{tableAttribute}"));
+            }
+
+            if (!string.IsNullOrEmpty(Table.Owner))
+            {
+                // .HasSchemaName("Analyst")
+                string schemaName = $".HasSchemaName(\"{Table.Owner}\")";
+                constructor.Statements.Add(new CodeSnippetStatement($"{TABS}{schemaName}"));
+            }
+
+
 
             //if (UsesSequence)
             //{
@@ -124,9 +137,9 @@ namespace NMG.Core.Generators.CodeGenerators
             if (pkAlsoFkQty > 0)
                 fieldName = fieldName + "Id";
 
-            string snippet = TABS + $".HasPrimaryKey(x => x.{formatter.FormatText(fieldName)})";
+            string snippet = TABS + $".Property(x => x.{formatter.FormatText(fieldName)}).IsPrimaryKey()";
             if (isPkTypeIntegral)
-                snippet += Environment.NewLine + TABS + $".HasIdentity(x => x.{formatter.FormatText(fieldName)})";
+                snippet += Environment.NewLine + TABS + $".Property(x => x.{formatter.FormatText(fieldName)}).IsIdentity()";
 
             return new CodeSnippetStatement(snippet);
         }
@@ -141,7 +154,7 @@ namespace NMG.Core.Generators.CodeGenerators
                 string fieldName = FixPropertyWithSameClassName(propertyName, table.Name);
                 int pkAlsoFkQty = (from fk in table.ForeignKeys.Where(fk => fk.UniquePropertyName == pkColumn.Name) select fk).Count();
                 if (pkAlsoFkQty > 0) fieldName = fieldName + "Id";
-                string tmp = $".HasPrimaryKey(x => x.{fieldName}, {count})";
+                string tmp = $".Property(x => x.{fieldName}).IsPrimaryKey()";
                 keyPropertyBuilder.Append("\n" + TABS + tmp);
                 count++;
             }
