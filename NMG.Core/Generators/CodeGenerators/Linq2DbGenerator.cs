@@ -53,21 +53,19 @@ namespace NMG.Core.Generators.CodeGenerators
             string columRequiered = ".IsColumnRequired()";
             constructor.Statements.Add(new CodeSnippetStatement($"{TABS}{columRequiered}"));
 
-            if (!Table.Name.ToLower().Equals(className.ToLower()))
-            {
-                // .HasTableName("AbcRating")
-                string tableAttribute = $".HasTableName(\"{Table.Name}\")";
-                constructor.Statements.Add(new CodeSnippetStatement($"{TABS}{tableAttribute}"));
-            }
-
-            if (!string.IsNullOrEmpty(Table.Owner))
+            //if (!string.IsNullOrEmpty(Table.Owner))
             {
                 // .HasSchemaName("Analyst")
                 string schemaName = $".HasSchemaName(\"{Table.Owner}\")";
                 constructor.Statements.Add(new CodeSnippetStatement($"{TABS}{schemaName}"));
             }
 
-
+            //if (!Table.Name.ToLower().Equals(className.ToLower()))
+            {
+                // .HasTableName("AbcRating")
+                string tableAttribute = $".HasTableName(\"{Table.Name}\")";
+                constructor.Statements.Add(new CodeSnippetStatement($"{TABS}{tableAttribute}"));
+            }
 
             //if (UsesSequence)
             //{
@@ -117,6 +115,7 @@ namespace NMG.Core.Generators.CodeGenerators
             builder.AppendLine("#pragma warning disable 1591");
             builder.AppendLine();
             builder.AppendLine("using LinqToDB.Mapping;");
+            builder.AppendLine("using Ztg.Trader.Persistor.Db.linq2db;");
             builder.Append(entireContent);
             return builder.ToString();
         }
